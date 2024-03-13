@@ -2,20 +2,17 @@ class Mario extends GameObject {
   constructor(config) {
     super(config);
 
-    // New properties for gravity and jumping
     this.isOnGround = false;
-    this.velocityY = 0; // Vertical velocity for gravity and jumps
-    this.velocityX = 0; // Horizontal velocity for movement
-    this.gravity = 0.4; // Gravity strength
-    this.jumpPower = -5; // Jump strength (negative to move up)
-    this.moveSpeed = 1; // Horizontal move speed
+    this.velocityY = 0;
+    this.velocityX = 0;
+    this.gravity = 0.4;
+    this.jumpPower = -5;
+    this.moveSpeed = 3;
     this.respawnX = config.x;
     this.respawnY = config.y;
 
     this.lastDirection = "right";
 
-    this.imageSizeX = 32;
-    this.imageSizeY = 40;
     this.imageRenderX = 16;
     this.imageRenderY = 22;
     this.isJumping = false;
@@ -30,8 +27,7 @@ class Mario extends GameObject {
     // Apply gravity
     this.applyGravity();
 
-    // Adjusted movement and jump handling based on DirectionInput
-    const currentDirection = state.arrow; // Assuming you pass the directionInput instance to Mario's update state
+    const currentDirection = state.arrow;
     if (currentDirection) {
       console.log(currentDirection);
       this.startBehavior(state, {
@@ -40,7 +36,6 @@ class Mario extends GameObject {
       });
     }
 
-    // Enhanced logic for stopping movement when no direction is held
     if (!currentDirection) {
       this.velocityX = 0;
     }
@@ -61,30 +56,26 @@ class Mario extends GameObject {
   }
 
   handleCollisionWithGoomba() {
-    // Stop Mario's movement
     this.velocityX = 0;
     this.velocityY = 0;
 
     this.state = "dead-ish";
 
-    // Temporarily disable input handling (assuming you have a method to do so)
-    this.disableInput = true; // You need to implement logic that checks this flag before processing input
+    // Temporarily disable input handling
+    this.disableInput = true; // We need to implement logic that checks this flag before processing input
 
-    // Call the respawn method after a delay
     setTimeout(() => {
       this.respawn();
     }, 2000);
   }
 
   startBehavior(state, behavior) {
-    // For jumping, maintain horizontal movement
     if (behavior.type === "jump" && !this.isJumping && this.isOnGround) {
       this.velocityY = this.jumpPower;
       this.isOnGround = false;
       this.isJumping = true;
       // Maintain horizontal movement if moving left or right
       if (state.holdingLeft || state.holdingRight) {
-        // You need to track these states based on user input
         this.velocityX = state.holdingLeft ? -this.moveSpeed : this.moveSpeed;
       }
     } else if (
