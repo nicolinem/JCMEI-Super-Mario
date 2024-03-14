@@ -5,8 +5,6 @@ class DirectionInput {
     this.map = {
       ArrowUp: "up",
       KeyW: "up",
-      ArrowDown: "down",
-      KeyS: "down",
       ArrowLeft: "left",
       KeyA: "left",
       ArrowRight: "right",
@@ -25,11 +23,14 @@ class DirectionInput {
         this.heldDirections.unshift(dir);
       }
 
-      if (e.code === "KeyS") {
+      if (e.code === "KeyM") {
         mario.transformToSuper();
       }
       if (e.code === "KeyN") {
         mario.transformToNormal();
+      }
+      if (e.code === "KeyL") {
+        mario.transformToStar();
       }
     });
     document.addEventListener("keyup", (e) => {
