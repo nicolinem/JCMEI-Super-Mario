@@ -26,16 +26,27 @@ class Sprite {
         [9, 0],
         [8, 0],
       ],
-      "super-idle-left": [[8, 2]],
+      "super-idle-left": [[8, 94]],
       "super-walk-right": [
-        [1, 2],
-        [0, 2],
+        [1, 94],
+        [0, 94],
       ],
-      "super-idle-right": [[0, 2]],
-      "super-dead-ish": [[13, 2]],
+      "super-idle-right": [[0, 94]],
+      "super-dead-ish": [[13, 94]],
       "super-walk-left": [
-        [9, 2],
-        [8, 2],
+        [9, 94],
+        [8, 94],
+      ],
+      "star-idle-left": [[8, 156]],
+      "star-walk-right": [
+        [1, 156],
+        [0, 156],
+      ],
+      "star-idle-right": [[0, 156]],
+      "star-dead-ish": [[13, 156]],
+      "star-walk-left": [
+        [9, 156],
+        [8, 156],
       ],
     };
 
@@ -96,7 +107,7 @@ class Sprite {
       ctx.drawImage(
         this.image,
         frameX * this.imageSizeX,
-        frameY * this.imageSizeY,
+        frameY,
         this.imageSizeX,
         this.imageSizeY,
         Math.round(this.gameObject.x),
