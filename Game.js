@@ -23,8 +23,6 @@ class Game {
         });
       });
 
-    
-
       // Draw Background
       this.map.drawBackgroundImage(this.ctx); // Updated to drawBackgroundImage
 
@@ -65,7 +63,7 @@ class Game {
     this.map.mountObjects();
 
     this.directionInput = new DirectionInput();
-    this.directionInput.init();
+    this.directionInput.init(this.map.gameObjects.mario);
 
     this.startGameLoop();
   }
