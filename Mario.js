@@ -10,12 +10,14 @@ class Mario extends GameObject {
     this.moveSpeed = 3;
     this.respawnX = config.x;
     this.respawnY = config.y;
+    this.sizeState = "normal";
 
     this.lastDirection = "right";
 
-    this.imageRenderX = 16;
-    this.imageRenderY = 22;
+    this.boxSizeX = 16;
+    this.boxSizeY = 24;
     this.isJumping = false;
+    this.sprite.pushY = -4;
 
     this.directionUpdate = {
       left: -this.moveSpeed,
@@ -29,7 +31,6 @@ class Mario extends GameObject {
 
     const currentDirection = state.arrow;
     if (currentDirection) {
-      console.log(currentDirection);
       this.startBehavior(state, {
         type: currentDirection === "up" && this.isOnGround ? "jump" : "move",
         direction: currentDirection,
@@ -148,12 +149,11 @@ class Mario extends GameObject {
   }
 
   getBoundingBox() {
-    console.log(this.x, this.y);
     return {
-      x: this.x,
-      y: this.y,
-      width: this.imageRenderX,
-      height: this.imageRenderY - 1,
+      x: Math.round(this.x),
+      y: Math.round(this.y),
+      width: this.boxSizeX,
+      height: this.boxSizeY + this.sprite.pushY,
     };
   }
 
@@ -167,16 +167,33 @@ class Mario extends GameObject {
     this.disableInput = false;
   }
 
+  transformToSuper() {
+    if (this.sizeState === "normal") {
+      this.sizeState = "super";
+      this.sprite.pushY = 0;
+      this.updateSprite();
+    }
+  }
+
+  transformToNormal() {
+    if (this.sizeState === "super") {
+      this.sizeState = "normal";
+      this.sprite.pushY = -4;
+      this.updateSprite();
+    }
+  }
+
   updateSprite() {
     if (this.state === "dead-ish") {
       this.sprite.setAnimation("dead-ish");
       return;
     }
+    const statePrefix = this.sizeState === "super" ? "super-" : ""; // Prefix for super state
     if (this.velocityX !== 0) {
       let direction = this.velocityX < 0 ? "left" : "right";
-      this.sprite.setAnimation(`walk-${direction}`);
+      this.sprite.setAnimation(`${statePrefix}walk-${direction}`);
     } else {
-      this.sprite.setAnimation(`idle-${this.lastDirection}`);
+      this.sprite.setAnimation(`${statePrefix}idle-${this.lastDirection}`);
     }
   }
 }

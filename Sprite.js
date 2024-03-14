@@ -4,10 +4,10 @@ class Sprite {
     this.image = new Image();
     this.image.src = config.src;
     this.imageSizeX = config.imageSizeX || 32;
-    this.imageSizeY = config.imageSizeY || 44;
+    this.imageSizeY = config.imageSizeY || 48;
     this.imageRenderX = config.imageRenderX || 16;
-    this.imageRenderY = config.imageRenderY || 22;
-    this.imagePushY = config.imagePushY || 2;
+    this.imageRenderY = config.imageRenderY || 24;
+    this.pushY = config.pushY || 0;
 
     this.image.onload = () => {
       this.isLoaded = true;
@@ -15,16 +15,27 @@ class Sprite {
 
     //Configure Animation & Initial State
     this.animations = config.animations || {
-      "idle-left": [[8, 1]],
+      "idle-left": [[8, 0]],
       "walk-right": [
-        [1, 1],
-        [0, 1],
+        [1, 0],
+        [0, 0],
       ],
-      "idle-right": [[0, 1]],
-      "dead-ish": [[13, 1]],
+      "idle-right": [[0, 0]],
+      "dead-ish": [[13, 0]],
       "walk-left": [
-        [9, 1],
-        [8, 1],
+        [9, 0],
+        [8, 0],
+      ],
+      "super-idle-left": [[8, 2]],
+      "super-walk-right": [
+        [1, 2],
+        [0, 2],
+      ],
+      "super-idle-right": [[0, 2]],
+      "super-dead-ish": [[13, 2]],
+      "super-walk-left": [
+        [9, 2],
+        [8, 2],
       ],
     };
 
@@ -78,18 +89,18 @@ class Sprite {
 
   draw(ctx) {
     // Simplify frame calculation based on the currentAnimation and currentAnimationFrame
-    const [frameX] =
+    const [frameX, frameY] =
       this.animations[this.currentAnimation][this.currentAnimationFrame];
 
     if (this.isLoaded) {
       ctx.drawImage(
         this.image,
         frameX * this.imageSizeX,
-        this.imagePushY + 4,
+        frameY * this.imageSizeY,
         this.imageSizeX,
         this.imageSizeY,
         Math.round(this.gameObject.x),
-        Math.round(this.gameObject.y),
+        Math.round(this.gameObject.y) + this.pushY,
         this.imageRenderX,
         this.imageRenderY
       );

@@ -12,8 +12,8 @@ class Goomba extends GameObject {
       src: config.src || "/images/enemies/goomba.png",
       animations: {
         "walk-left": [
-          [0, 1],
-          [1, 1],
+          [0, 0],
+          [1, 0],
         ],
       },
       animationFrameLimit: config.animationFrameLimit || 8,
