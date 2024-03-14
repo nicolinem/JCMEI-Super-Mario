@@ -86,7 +86,9 @@ class Mario extends GameObject {
       this.velocityX = this.directionUpdate[behavior.direction];
     }
     if (behavior.type === "move") {
-      this.lastDirection = behavior.direction;
+      if (behavior.direction !== "up") {
+        this.lastDirection = behavior.direction;
+      }
     }
   }
 
@@ -153,7 +155,7 @@ class Mario extends GameObject {
       x: Math.round(this.x),
       y: Math.round(this.y),
       width: this.boxSizeX,
-      height: this.boxSizeY + this.sprite.pushY,
+      height: this.sprite.imageRenderY + this.sprite.pushY,
     };
   }
 
@@ -170,15 +172,38 @@ class Mario extends GameObject {
   transformToSuper() {
     if (this.sizeState === "normal") {
       this.sizeState = "super";
+      this.sprite.imageSizeY = 56;
+      this.sprite.imageRenderY = 28;
+      this.y -= 8;
       this.sprite.pushY = 0;
+      this.updateSprite();
+    } else if (this.sizeState === "star") {
+      this.sizeState = "super";
+      this.updateSprite();
+    }
+  }
+
+  transformToStar() {
+    if (this.sizeState === "normal") {
+      this.sizeState = "star";
+      this.sprite.imageSizeY = 56;
+      this.sprite.imageRenderY = 28;
+      this.y -= 8;
+      this.sprite.pushY = 0;
+      this.updateSprite();
+    } else if (this.sizeState === "super") {
+      this.sizeState = "star";
       this.updateSprite();
     }
   }
 
   transformToNormal() {
-    if (this.sizeState === "super") {
+    if (this.sizeState === "super" || this.sizeState === "star") {
       this.sizeState = "normal";
+      this.sprite.imageSizeY = 48;
+      this.sprite.imageRenderY = 24;
       this.sprite.pushY = -4;
+      this.y += 4;
       this.updateSprite();
     }
   }
@@ -188,11 +213,19 @@ class Mario extends GameObject {
       this.sprite.setAnimation("dead-ish");
       return;
     }
-    const statePrefix = this.sizeState === "super" ? "super-" : ""; // Prefix for super state
+    const statePrefix = this.sizeState === "normal" ? "" : `${this.sizeState}-`;
+
+    // Exclude "down" from affecting sprite animation
+    let direction = this.lastDirection;
+    if (direction === "up") {
+      direction = "idle-" + this.lastDirection; // Use the last non-down direction if down is detected
+    }
+
     if (this.velocityX !== 0) {
       let direction = this.velocityX < 0 ? "left" : "right";
       this.sprite.setAnimation(`${statePrefix}walk-${direction}`);
     } else {
+      console.log(this.lastDirection);
       this.sprite.setAnimation(`${statePrefix}idle-${this.lastDirection}`);
     }
   }
