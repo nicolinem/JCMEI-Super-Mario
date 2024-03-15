@@ -61,9 +61,9 @@ class Mario extends GameObject {
   checkPowerUpCollisions() {
     Object.keys(this.map.gameObjects).forEach((key) => {
       const obj = this.map.gameObjects[key];
-      if (obj instanceof Mushroom) {
+      if (obj instanceof Mushroom || obj instanceof Star) {
         if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
-          this.handleCollisionWithPowerUp(key);
+          this.handleCollisionWithPowerUp(obj, key);
         }
       }
     });
@@ -83,10 +83,14 @@ class Mario extends GameObject {
     }, 2000);
   }
 
-  handleCollisionWithPowerUp(key) {
+  handleCollisionWithPowerUp(powerUp, key) {
     this.velocityX = 0;
     this.velocityY = 0;
-    this.transformToSuper();
+    if (powerUp instanceof Mushroom) {
+      this.transformToSuper();
+    } else if (powerUp instanceof Star) {
+      this.transformToStar();
+    }
     this.disableInput = true;
 
     // Remove the power-up from the gameObjects map
