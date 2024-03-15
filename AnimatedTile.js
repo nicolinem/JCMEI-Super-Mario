@@ -4,6 +4,7 @@ class AnimatedTile extends Tile {
     this.isAnimated = config.isAnimated || false;
     this.image.src = "/images/eventBlock_.png";
     this.hasItem = true;
+    this.item = config.item || "";
     this.animationFrames = config.animationFrames || [
       [0, 0],
       [1, 0],
@@ -31,9 +32,15 @@ class AnimatedTile extends Tile {
 
   interact() {
     super.interact();
+
     if (this.hasItem) {
+      if (this.item === "mushroom") {
+        this.spawnMushroom();
+      }
+      if (this.item === "star") {
+        this.spawnStar();
+      }
       this.hasItem = false;
-      this.spawnMushroom();
       this.updateSpriteSheet();
     }
   }
@@ -62,6 +69,22 @@ class AnimatedTile extends Tile {
 
     // If your GameObjects require a mount call to be fully initialized, do that here
     mushroom.mount(this.map);
+  }
+
+  spawnStar() {
+    const star = new Star({
+      x: this.x,
+      y: this.y - 16, // Position the star above the tile
+      src: "/images/powerups.png", // Specify the source of the star sprite
+    });
+
+    // Assuming the game has a way to access and add new game objects dynamically
+    // You may need to adjust this part based on your game architecture
+    this.map.gameObjects[`star_${Object.keys(this.map.gameObjects).length}`] =
+      star;
+
+    // If your GameObjects require a mount call to be fully initialized, do that here
+    star.mount(this.map);
   }
 
   updateAnimation() {
