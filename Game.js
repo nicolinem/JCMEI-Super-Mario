@@ -20,6 +20,9 @@ class Game {
           goombas: Object.values(this.map.gameObjects).filter(
             (obj) => obj instanceof Goomba
           ),
+          powerups: Object.values(this.map.gameObjects).filter(
+            (obj) => obj instanceof Mushroom
+          ),
         });
       });
 
@@ -50,12 +53,12 @@ class Game {
           y: 5 * 16,
           src: "/images/characters/mario-sprites.png",
         }),
-        goomba: new Goomba({
-          isPlayerControlled: false,
-          x: 18 * 16,
-          y: 7 * 16,
-          src: "/images/enemies/goomba.png",
-        }),
+        // goomba: new Goomba({
+        //   isPlayerControlled: false,
+        //   x: 18 * 16,
+        //   y: 7 * 16,
+        //   src: "/images/enemies/goomba.png",
+        // }),
       },
     };
 

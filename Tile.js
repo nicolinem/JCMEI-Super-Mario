@@ -6,6 +6,8 @@ class Tile {
     this.type = config.type;
     this.image = new Image();
     this.image.src = "/images/tiles2transp6.png";
+    this.imageSizeX = 16;
+    this.imageSizeY = 16;
     this.imageLoaded = false;
     this.image.onload = () => {
       this.imageLoaded = true;
@@ -32,12 +34,16 @@ class Tile {
       this.image,
       sx,
       sy,
-      16,
-      16,
+      this.imageSizeX,
+      this.imageSizeY,
       this.x,
       this.y,
       this.tileSize,
       this.tileSize
     );
+
+    // ctx.strokeStyle = "red"; // Set the color of the bounding box line
+    // ctx.lineWidth = 0.5; // Set the line width of the bounding box
+    // ctx.strokeRect(this.x, this.y, this.tileSize, this.tileSize);
   }
 }
