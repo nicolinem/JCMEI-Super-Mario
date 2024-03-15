@@ -14,6 +14,8 @@ class Tile {
     };
   }
 
+  interact() {}
+
   getBoundingBox() {
     return {
       x: this.x,
