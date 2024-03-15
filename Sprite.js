@@ -118,5 +118,12 @@ class Sprite {
     }
 
     this.updateAnimationProgress();
+
+    // if (this.gameObject.getBoundingBox) {
+    //   const box = this.gameObject.getBoundingBox();
+    //   ctx.strokeStyle = "red"; // Set the color of the bounding box line
+    //   ctx.lineWidth = 1; // Set the line width of the bounding box
+    //   ctx.strokeRect(box.x, box.y, box.width, box.height);
+    // }
   }
 }

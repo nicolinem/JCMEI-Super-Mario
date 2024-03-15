@@ -17,7 +17,7 @@ class GameLevel {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 10, 10, 3, 5, 0, , 0, 3, 4, 5, 0, 0, 0, 0, 0, 0, 6, 1],
+        [0, 0, 0, 0, 10, 11, 3, 5, 0, , 0, 3, 4, 5, 0, 0, 0, 0, 0, 0, 6, 1],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 2],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 2, 2, 2],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
@@ -49,23 +49,21 @@ class GameLevel {
                 tileSize: this.tileSize,
                 type: tileTypes[tileCode].spriteCoordinates,
                 isAnimated: true,
-                animationFrames: [
-                  [0, 0],
-                  [1, 0],
-                  [2, 0],
-                  [3, 0],
-                  [4, 0],
-                  [5, 0],
-                  [6, 0],
-                  [7, 0],
-                  [8, 0],
-                  [9, 0],
-                  [10, 0],
-                  [11, 0],
-                  [12, 0],
-                  [13, 0],
-                ], // Example frame coordinates
-                animationSpeed: 2, // Adjust as necessary
+                map: this,
+                item: "mushroom",
+              })
+            );
+          } else if (tileCode === 11) {
+            // Check if this is an animated event block
+            this.tiles.push(
+              new AnimatedTile({
+                x: x,
+                y: y,
+                tileSize: this.tileSize,
+                type: tileTypes[tileCode].spriteCoordinates,
+                isAnimated: true,
+                map: this,
+                item: "star",
               })
             );
           } else if (tileTypes[tileCode]) {

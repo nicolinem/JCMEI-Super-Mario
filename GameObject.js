@@ -11,7 +11,12 @@ class GameObject {
   }
 
   mount(map) {
+    this.map = map;
     this.isMounted = true;
+  }
+
+  unmount() {
+    this.isMounted = false;
   }
 
   update() {}

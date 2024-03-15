@@ -43,6 +43,8 @@ class Mario extends GameObject {
 
     this.checkGoombaCollisions(state.goombas);
 
+    this.checkPowerUpCollisions();
+
     this.updatePosition(state.map);
 
     this.updateSprite();
@@ -52,6 +54,17 @@ class Mario extends GameObject {
     goombas.forEach((goomba) => {
       if (this.checkCollision(this.getBoundingBox(), goomba.getBoundingBox())) {
         this.handleCollisionWithGoomba();
+      }
+    });
+  }
+
+  checkPowerUpCollisions() {
+    Object.keys(this.map.gameObjects).forEach((key) => {
+      const obj = this.map.gameObjects[key];
+      if (obj instanceof Mushroom || obj instanceof Star) {
+        if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
+          this.handleCollisionWithPowerUp(obj, key);
+        }
       }
     });
   }
@@ -68,6 +81,24 @@ class Mario extends GameObject {
     setTimeout(() => {
       this.respawn();
     }, 2000);
+  }
+
+  handleCollisionWithPowerUp(powerUp, key) {
+    this.velocityX = 0;
+    this.velocityY = 0;
+    if (powerUp instanceof Mushroom) {
+      this.transformToSuper();
+    } else if (powerUp instanceof Star) {
+      this.transformToStar();
+    }
+    this.disableInput = true;
+
+    // Remove the power-up from the gameObjects map
+    delete this.map.gameObjects[key];
+
+    setTimeout(() => {
+      this.disableInput = false;
+    }, 1000);
   }
 
   startBehavior(state, behavior) {
@@ -108,7 +139,7 @@ class Mario extends GameObject {
     let canMoveY = true;
 
     const characterBox = this.getBoundingBox();
-    const nextXBox = { ...characterBox, x: proposedX };
+    const nextXBox = { ...characterBox, x: proposedX + 2 };
     const nextYBox = { ...characterBox, y: proposedY };
 
     this.isOnGround = false;
@@ -128,6 +159,7 @@ class Mario extends GameObject {
           this.isOnGround = true;
           this.velocityY = 0; // Stop vertical movement
         } else if (isHittingCeiling) {
+          tile.interact();
           this.velocityY = 0; // Stop vertical movement, but do not set isOnGround
         }
 
@@ -152,9 +184,9 @@ class Mario extends GameObject {
 
   getBoundingBox() {
     return {
-      x: Math.round(this.x),
+      x: Math.round(this.x) + 2,
       y: Math.round(this.y),
-      width: this.boxSizeX,
+      width: this.boxSizeX - 4,
       height: this.sprite.imageRenderY + this.sprite.pushY,
     };
   }
@@ -225,7 +257,6 @@ class Mario extends GameObject {
       let direction = this.velocityX < 0 ? "left" : "right";
       this.sprite.setAnimation(`${statePrefix}walk-${direction}`);
     } else {
-      console.log(this.lastDirection);
       this.sprite.setAnimation(`${statePrefix}idle-${this.lastDirection}`);
     }
   }
