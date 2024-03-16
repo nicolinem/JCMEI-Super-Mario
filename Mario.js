@@ -6,7 +6,7 @@ class Mario extends GameObject {
     this.velocityY = 0;
     this.velocityX = 0;
     this.gravity = 0.4;
-    this.jumpPower = -5;
+    this.jumpPower = -6;
     this.moveSpeed = 3;
     this.respawnX = config.x;
     this.respawnY = config.y;
@@ -15,7 +15,7 @@ class Mario extends GameObject {
     this.lastDirection = "right";
 
     this.boxSizeX = 16;
-    this.boxSizeY = 24;
+    this.boxSizeY = 16;
     this.isJumping = false;
     this.sprite.pushY = -4;
 
@@ -167,10 +167,15 @@ class Mario extends GameObject {
       }
     });
 
-    if (canMoveX) this.x = proposedX;
+    if (this.x >= 352 / 2 && this.lastDirection === "right" && canMoveX) {
+      // Shift the world left instead of moving Mario right
+      this.map.tiles.forEach((tile) => (tile.x -= this.velocityX));
+      this.map.movePowerUps(-this.velocityX);
+      this.map.moveGoomba(-this.velocityX);
+    } else {
+      if (canMoveX) this.x = proposedX;
+    }
     if (canMoveY) this.y = proposedY;
-
-    // Reset jump flag only if on the ground
     if (this.isOnGround) {
       this.isJumping = false;
     }

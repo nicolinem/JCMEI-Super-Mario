@@ -10,17 +10,17 @@ const tileTypes = {
     solid: true,
   },
   3: {
-    name: "FloatingGrassCornerRight",
+    name: "FloatingGrassCornerLeft",
     spriteCoordinates: [39, 31],
     solid: false, // Example of a non-collidable tile
   },
   4: {
-    name: "FloatingGrassCornerLeft",
+    name: "FloatingGrass",
     spriteCoordinates: [40, 31],
     solid: true,
   },
   5: {
-    name: "FloatingGrassCornerLeft",
+    name: "FloatingGrassCornerRight",
     spriteCoordinates: [41, 31],
     solid: true,
   },
@@ -50,6 +50,11 @@ const tileTypes = {
     solid: true,
   },
   11: {
+    name: "FloatingGrassCornerLeft",
+    spriteCoordinates: [47, 31],
+    solid: true,
+  },
+  12: {
     name: "FloatingGrassCornerLeft",
     spriteCoordinates: [47, 31],
     solid: true,
