@@ -3,45 +3,73 @@ class GameLevel {
     this.gameObjects = config.gameObjects || {};
     this.backgroundImage = new Image();
     this.backgroundImage.src = config.lowerSrc;
-    this.loadMap(1);
+
     this.tileSize = config.tileSize || 16;
+
+    this.maps = {
+      1: {
+        part2: [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        ],
+        part1: [
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11],
+          [0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 3, 4, 4, 4, 5, 0, 0, 0, 0, 0, 12],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ],
+        // Add more parts as needed
+      },
+      // Add more maps as needed
+    };
+
+    this.loadMap(1);
   }
 
   loadMap(mapId) {
-    var map = {
-      1: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 4, 4, 5, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 5, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 10, 11, 3, 5, 0, , 0, 3, 4, 5, 0, 0, 0, 0, 0, 0, 6, 1],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 2, 2],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 2, 2, 2],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2],
-        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-      ],
-    };
-
-    const mapData = map[mapId];
-    if (!mapData) {
+    const mapParts = this.maps[mapId];
+    if (!mapParts) {
       console.error("Map data not found for mapId:", mapId);
       return;
     }
     this.tiles = [];
-    this.spawnBlocks(mapData);
+    let xOffset = 0; // Initialize the horizontal offset
+
+    // Use an ordered list of map part keys if ordering is important
+    const partKeys = Object.keys(mapParts).sort(); // This ensures parts are processed in order
+    partKeys.forEach((partKey) => {
+      const mapData = mapParts[partKey];
+      this.spawnBlocks(mapData, xOffset);
+      xOffset += mapData[0].length * this.tileSize; // Increase xOffset by the width of the current part
+    });
   }
 
-  spawnBlocks(mapData) {
+  spawnBlocks(mapData, xOffset) {
     mapData.forEach((row, rowIndex) => {
       row.forEach((tileCode, colIndex) => {
-        const x = 16 * colIndex;
-        const y = 16 * rowIndex;
+        const x = xOffset + this.tileSize * colIndex; // Adjust the x-coordinate with xOffset
+        const y = this.tileSize * rowIndex;
         if (tileCode !== 0) {
+          // Your existing logic to spawn tiles based on their code
           if (tileCode === 10) {
-            // Check if this is an animated event block
             this.tiles.push(
               new AnimatedTile({
                 x: x,
@@ -54,7 +82,6 @@ class GameLevel {
               })
             );
           } else if (tileCode === 11) {
-            // Check if this is an animated event block
             this.tiles.push(
               new AnimatedTile({
                 x: x,
@@ -66,8 +93,18 @@ class GameLevel {
                 item: "star",
               })
             );
+          } else if (tileCode === 12) {
+            this.tiles.push(
+              new AnimatedTile({
+                x: x,
+                y: y,
+                tileSize: this.tileSize,
+                type: tileTypes[tileCode].spriteCoordinates,
+                isAnimated: true,
+                map: this,
+              })
+            );
           } else if (tileTypes[tileCode]) {
-            // Regular tile
             this.tiles.push(
               new Tile({
                 x: x,
@@ -79,6 +116,22 @@ class GameLevel {
           }
         }
       });
+    });
+  }
+
+  moveGoomba(x) {
+    Object.values(this.gameObjects).forEach((obj) => {
+      if (obj instanceof Goomba) {
+        obj.x += x;
+      }
+    });
+  }
+
+  movePowerUps(x) {
+    Object.values(this.gameObjects).forEach((obj) => {
+      if (obj instanceof Mushroom || obj instanceof Star) {
+        obj.x += x;
+      }
     });
   }
 
