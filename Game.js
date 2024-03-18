@@ -16,6 +16,7 @@ class Game {
       Object.values(this.map.gameObjects).forEach((object) => {
         object.update({
           arrow: this.directionInput.direction,
+          jumping: this.directionInput.jump,
           map: this.map,
           goombas: Object.values(this.map.gameObjects).filter(
             (obj) => obj instanceof Goomba

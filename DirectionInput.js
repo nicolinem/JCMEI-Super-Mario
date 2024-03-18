@@ -1,15 +1,18 @@
 class DirectionInput {
   constructor() {
     this.heldDirections = [];
+    this.jumping = false;
 
     this.map = {
-      ArrowUp: "up",
-      KeyW: "up",
       ArrowLeft: "left",
       KeyA: "left",
       ArrowRight: "right",
       KeyD: "right",
     };
+  }
+
+  get jump() {
+    return this.jumping;
   }
 
   get direction() {
@@ -21,6 +24,13 @@ class DirectionInput {
       const dir = this.map[e.code];
       if (dir && this.heldDirections.indexOf(dir) === -1) {
         this.heldDirections.unshift(dir);
+      }
+      if (e.code === "KeyW" || e.code === "ArrowUp") {
+        this.jumping = true;
+      }
+
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+        mario.increaseSpeed();
       }
 
       if (e.code === "KeyM") {
@@ -38,6 +48,13 @@ class DirectionInput {
       const index = this.heldDirections.indexOf(dir);
       if (index > -1) {
         this.heldDirections.splice(index, 1);
+      }
+      if (e.code === "KeyW" || e.code === "ArrowUp") {
+        this.jumping = false;
+      }
+
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+        mario.resetSpeed();
       }
     });
   }
