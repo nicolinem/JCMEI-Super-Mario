@@ -3,7 +3,6 @@ class GameLevel {
     this.gameObjects = config.gameObjects || {};
     this.backgroundImage = new Image();
     this.backgroundImage.src = config.lowerSrc;
-
     this.tileSize = config.tileSize || 16;
 
     this.maps = {
@@ -15,8 +14,8 @@ class GameLevel {
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 3, 4, 4, 4, 5, 0, 0, 0, 0, 0, 12],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -29,9 +28,9 @@ class GameLevel {
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11],
           [0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 3, 4, 4, 4, 5, 0, 0, 0, 0, 0, 12],
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 13, 13, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 13, 13, 13, 13, 13, 0, 0, 0, 0, 0, 12],
+          [0, 0, 0, 0, 0, 0, 0, 3, 4, 4, 4, 5, 0, 0, 0, 14, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -67,52 +66,65 @@ class GameLevel {
       row.forEach((tileCode, colIndex) => {
         const x = xOffset + this.tileSize * colIndex; // Adjust the x-coordinate with xOffset
         const y = this.tileSize * rowIndex;
+
         if (tileCode !== 0) {
-          // Your existing logic to spawn tiles based on their code
-          if (tileCode === 10) {
-            this.tiles.push(
-              new AnimatedTile({
+          switch (tileCode) {
+            case 10:
+              this.tiles.push(
+                new AnimatedTile({
+                  x: x,
+                  y: y,
+                  type: tileTypes[tileCode].spriteCoordinates,
+                  map: this,
+                  item: "mushroom",
+                })
+              );
+              break;
+            case 11:
+              this.tiles.push(
+                new AnimatedTile({
+                  x: x,
+                  y: y,
+                  type: tileTypes[tileCode].spriteCoordinates,
+                  map: this,
+                  item: "star",
+                })
+              );
+              break;
+            case 12:
+              this.tiles.push(
+                new AnimatedTile({
+                  x: x,
+                  y: y,
+                  type: tileTypes[tileCode].spriteCoordinates,
+                  map: this,
+                })
+              );
+              break;
+            case 13:
+              this.gameObjects[`coin_${x}_${y}`] = new Coin({
                 x: x,
                 y: y,
-                tileSize: this.tileSize,
-                type: tileTypes[tileCode].spriteCoordinates,
-                isAnimated: true,
-                map: this,
-                item: "mushroom",
-              })
-            );
-          } else if (tileCode === 11) {
-            this.tiles.push(
-              new AnimatedTile({
+              });
+              break;
+            case 14:
+              this.gameObjects[`goomba_${x}_${y}`] = new Goomba({
                 x: x,
                 y: y,
-                tileSize: this.tileSize,
-                type: tileTypes[tileCode].spriteCoordinates,
-                isAnimated: true,
-                map: this,
-                item: "star",
-              })
-            );
-          } else if (tileCode === 12) {
-            this.tiles.push(
-              new AnimatedTile({
-                x: x,
-                y: y,
-                tileSize: this.tileSize,
-                type: tileTypes[tileCode].spriteCoordinates,
-                isAnimated: true,
-                map: this,
-              })
-            );
-          } else if (tileTypes[tileCode]) {
-            this.tiles.push(
-              new Tile({
-                x: x,
-                y: y,
-                tileSize: this.tileSize,
-                type: tileTypes[tileCode].spriteCoordinates,
-              })
-            );
+              });
+              break;
+            default:
+              if (tileTypes[tileCode]) {
+                this.tiles.push(
+                  new Tile({
+                    x: x,
+                    y: y,
+                    tileSize: this.tileSize,
+                    type: tileTypes[tileCode].spriteCoordinates,
+                  })
+                );
+              }
+              break;
           }
         }
       });
@@ -122,6 +134,14 @@ class GameLevel {
   moveGoomba(x) {
     Object.values(this.gameObjects).forEach((obj) => {
       if (obj instanceof Goomba) {
+        obj.x += x;
+      }
+    });
+  }
+
+  moveCoins(x) {
+    Object.values(this.gameObjects).forEach((obj) => {
+      if (obj instanceof Coin) {
         obj.x += x;
       }
     });
