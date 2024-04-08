@@ -1,48 +1,29 @@
 class Mario extends GameObject {
   constructor(config) {
     super(config);
-
     this.isOnGround = false;
-    this.velocityY = 0;
-    this.velocityX = 0;
+    this.velocity = { x: 0, y: 0 };
     this.gravity = 0.4;
-    this.jumpPower = -6;
-    this.moveSpeed = 3;
-    this.respawnX = config.x;
-    this.respawnY = config.y;
+    this.jumpPower = -6.2;
+    this.respawnPosition = { x: config.x, y: config.y };
     this.sizeState = "normal";
-
     this.lastDirection = "right";
-
-    this.boxSizeX = 16;
-    this.boxSizeY = 16;
+    this.baseMoveSpeed = 2.5;
+    this.boxSize = { x: 16, y: 22 };
     this.isJumping = false;
     this.sprite.pushY = -4;
-
-    this.directionUpdate = {
-      left: -this.moveSpeed,
-      right: this.moveSpeed,
-    };
+    this.speedMultiplier = 1;
+    this.moveSpeed = this.baseMoveSpeed * this.speedMultiplier;
   }
 
   update(state) {
-    // Apply gravity
     this.applyGravity();
 
-    const currentDirection = state.arrow;
-    if (currentDirection) {
-      this.startBehavior(state, {
-        type: currentDirection === "up" && this.isOnGround ? "jump" : "move",
-        direction: currentDirection,
-      });
-    }
-
-    if (!currentDirection) {
-      this.velocityX = 0;
-    }
+    this.handleInput(state);
 
     this.checkGoombaCollisions(state.goombas);
 
+    this.checkCoinCollision();
     this.checkPowerUpCollisions();
 
     this.updatePosition(state.map);
@@ -50,10 +31,50 @@ class Mario extends GameObject {
     this.updateSprite();
   }
 
+  handleInput(state) {
+    const direction = state.arrow;
+    const jumping = state.jumping;
+
+    if (direction) this.lastDirection = direction;
+
+    // Horizontal movement handling
+    if (!direction) this.velocity.x = 0;
+    if (direction === "left" || direction === "right") {
+      this.move(direction);
+    }
+    if (jumping) {
+      this.jump();
+    }
+  }
+
+  jump() {
+    if (!this.isJumping && this.isOnGround) {
+      this.velocity.y = this.jumpPower;
+      this.isOnGround = false;
+      this.isJumping = true;
+    }
+  }
+
+  move(direction) {
+    this.velocity.x = direction === "left" ? -this.moveSpeed : this.moveSpeed;
+    this.lastDirection = direction;
+  }
+
   checkGoombaCollisions(goombas) {
     goombas.forEach((goomba) => {
       if (this.checkCollision(this.getBoundingBox(), goomba.getBoundingBox())) {
         this.handleCollisionWithGoomba();
+      }
+    });
+  }
+
+  checkCoinCollision() {
+    Object.keys(this.map.gameObjects).forEach((key) => {
+      const obj = this.map.gameObjects[key];
+      if (obj instanceof Coin) {
+        if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
+          this.handleCollisionWithCoin(obj, key);
+        }
       }
     });
   }
@@ -70,22 +91,27 @@ class Mario extends GameObject {
   }
 
   handleCollisionWithGoomba() {
-    this.velocityX = 0;
-    this.velocityY = 0;
+    this.velocity.x = 0;
+    this.velocity.y = 0;
 
     this.state = "dead-ish";
 
     // Temporarily disable input handling
-    this.disableInput = true; // We need to implement logic that checks this flag before processing input
+    this.disableInput = true;
 
     setTimeout(() => {
       this.respawn();
     }, 2000);
   }
 
+  handleCollisionWithCoin(obj, key) {
+    this.map.coins += 1;
+    delete this.map.gameObjects[key];
+  }
+
   handleCollisionWithPowerUp(powerUp, key) {
-    this.velocityX = 0;
-    this.velocityY = 0;
+    this.velocity.x = 0;
+    this.velocity.y = 0;
     if (powerUp instanceof Mushroom) {
       this.transformToSuper();
     } else if (powerUp instanceof Star) {
@@ -101,45 +127,16 @@ class Mario extends GameObject {
     }, 1000);
   }
 
-  startBehavior(state, behavior) {
-    if (behavior.type === "jump" && !this.isJumping && this.isOnGround) {
-      this.velocityY = this.jumpPower;
-      this.isOnGround = false;
-      this.isJumping = true;
-      // Maintain horizontal movement if moving left or right
-      if (state.holdingLeft || state.holdingRight) {
-        this.velocityX = state.holdingLeft ? -this.moveSpeed : this.moveSpeed;
-      }
-    } else if (
-      behavior.type === "move" &&
-      this.directionUpdate[behavior.direction] !== undefined
-    ) {
-      this.velocityX = this.directionUpdate[behavior.direction];
-    }
-    if (behavior.type === "move") {
-      if (behavior.direction !== "up") {
-        this.lastDirection = behavior.direction;
-      }
-    }
-  }
-
-  checkCollision(rect1, rect2) {
-    return (
-      rect1.x < rect2.x + rect2.width &&
-      rect1.x + rect1.width > rect2.x &&
-      rect1.y < rect2.y + rect2.height &&
-      rect1.y + rect1.height > rect2.y
-    );
-  }
-
   updatePosition(map) {
-    let proposedX = this.x + this.velocityX;
-    let proposedY = this.y + this.velocityY;
+    let proposedX = this.x + this.velocity.x;
+    let proposedY = this.y + this.velocity.y;
     let canMoveX = true;
     let canMoveY = true;
 
+    // Correct bounding box calculation if necessary
     const characterBox = this.getBoundingBox();
-    const nextXBox = { ...characterBox, x: proposedX + 2 };
+
+    const nextXBox = { ...characterBox, x: proposedX };
     const nextYBox = { ...characterBox, y: proposedY };
 
     this.isOnGround = false;
@@ -152,26 +149,27 @@ class Mario extends GameObject {
       }
       if (this.checkCollision(nextYBox, tileBox)) {
         // Determine if collision is from above or below
-        const isHittingCeiling = proposedY < this.y && this.velocityY < 0;
+        const isHittingCeiling = proposedY < this.y && this.velocity.y < 0;
         const isLanding = proposedY > this.y;
 
         if (isLanding) {
           this.isOnGround = true;
-          this.velocityY = 0; // Stop vertical movement
+          this.velocity.y = 0; // Stop vertical movement
         } else if (isHittingCeiling) {
           tile.interact();
-          this.velocityY = 0; // Stop vertical movement, but do not set isOnGround
+          this.velocity.y = 0; // Stop vertical movement, but do not set isOnGround
         }
-
         canMoveY = false;
       }
     });
 
     if (this.x >= 352 / 2 && this.lastDirection === "right" && canMoveX) {
       // Shift the world left instead of moving Mario right
-      this.map.tiles.forEach((tile) => (tile.x -= this.velocityX));
-      this.map.movePowerUps(-this.velocityX);
-      this.map.moveGoomba(-this.velocityX);
+
+      this.map.tiles.forEach((tile) => (tile.x -= Math.round(this.velocity.x)));
+      this.map.movePowerUps(-Math.round(this.velocity.x));
+      this.map.moveGoomba(-Math.round(this.velocity.x));
+      this.map.moveCoins(-Math.round(this.velocity.x));
     } else {
       if (canMoveX) this.x = proposedX;
     }
@@ -181,17 +179,11 @@ class Mario extends GameObject {
     }
   }
 
-  applyGravity() {
-    if (!this.isOnGround) {
-      this.velocityY += this.gravity;
-    }
-  }
-
   getBoundingBox() {
     return {
-      x: Math.round(this.x) + 2,
+      x: Math.round(this.x),
       y: Math.round(this.y),
-      width: this.boxSizeX - 4,
+      width: this.boxSize.x,
       height: this.sprite.imageRenderY + this.sprite.pushY,
     };
   }
@@ -206,42 +198,49 @@ class Mario extends GameObject {
     this.disableInput = false;
   }
 
-  transformToSuper() {
-    if (this.sizeState === "normal") {
-      this.sizeState = "super";
-      this.sprite.imageSizeY = 56;
-      this.sprite.imageRenderY = 28;
-      this.y -= 8;
-      this.sprite.pushY = 0;
-      this.updateSprite();
-    } else if (this.sizeState === "star") {
-      this.sizeState = "super";
+  transformSize(state, config) {
+    // Check if a state change is needed
+    if (this.sizeState !== state) {
+      this.sizeState = state;
+
+      // Apply the configuration changes
+      if (config) {
+        this.sprite.imageSizeY = config.imageSizeY || this.sprite.imageSizeY;
+        this.sprite.imageRenderY =
+          config.imageRenderY || this.sprite.imageRenderY;
+        this.sprite.pushY =
+          config.pushY !== undefined ? config.pushY : this.sprite.pushY;
+        this.y += config.yAdjust || 0;
+      }
+
       this.updateSprite();
     }
   }
 
+  transformToSuper() {
+    const config =
+      this.sizeState === "normal"
+        ? { imageSizeY: 56, imageRenderY: 28, pushY: 0, yAdjust: -8 }
+        : null;
+    this.transformSize("super", config);
+  }
+
   transformToStar() {
-    if (this.sizeState === "normal") {
-      this.sizeState = "star";
-      this.sprite.imageSizeY = 56;
-      this.sprite.imageRenderY = 28;
-      this.y -= 8;
-      this.sprite.pushY = 0;
-      this.updateSprite();
-    } else if (this.sizeState === "super") {
-      this.sizeState = "star";
-      this.updateSprite();
-    }
+    const config =
+      this.sizeState === "normal" || this.sizeState === "super"
+        ? { imageSizeY: 56, imageRenderY: 28, pushY: 0, yAdjust: -8 }
+        : null;
+    this.transformSize("star", config);
   }
 
   transformToNormal() {
     if (this.sizeState === "super" || this.sizeState === "star") {
-      this.sizeState = "normal";
-      this.sprite.imageSizeY = 48;
-      this.sprite.imageRenderY = 24;
-      this.sprite.pushY = -4;
-      this.y += 4;
-      this.updateSprite();
+      this.transformSize("normal", {
+        imageSizeY: 48,
+        imageRenderY: 24,
+        pushY: -4,
+        yAdjust: 4,
+      });
     }
   }
 
@@ -258,11 +257,36 @@ class Mario extends GameObject {
       direction = "idle-" + this.lastDirection; // Use the last non-down direction if down is detected
     }
 
-    if (this.velocityX !== 0) {
-      let direction = this.velocityX < 0 ? "left" : "right";
+    if (this.velocity.x !== 0) {
+      let direction = this.velocity.x < 0 ? "left" : "right";
       this.sprite.setAnimation(`${statePrefix}walk-${direction}`);
     } else {
       this.sprite.setAnimation(`${statePrefix}idle-${this.lastDirection}`);
     }
+  }
+
+  applyGravity() {
+    if (!this.isOnGround) {
+      this.velocity.y += this.gravity;
+    }
+  }
+
+  checkCollision(rect1, rect2) {
+    return (
+      rect1.x < rect2.x + rect2.width &&
+      rect1.x + rect1.width > rect2.x &&
+      rect1.y < rect2.y + rect2.height &&
+      rect1.y + rect1.height > rect2.y
+    );
+  }
+
+  increaseSpeed() {
+    this.speedMultiplier = 1.5; // Adjust multiplier as needed
+    this.moveSpeed = this.baseMoveSpeed * this.speedMultiplier;
+  }
+
+  resetSpeed() {
+    this.speedMultiplier = 1; // Reset multiplier
+    this.moveSpeed = this.baseMoveSpeed * this.speedMultiplier;
   }
 }

@@ -16,12 +16,16 @@ class Game {
       Object.values(this.map.gameObjects).forEach((object) => {
         object.update({
           arrow: this.directionInput.direction,
+          jumping: this.directionInput.jump,
           map: this.map,
           goombas: Object.values(this.map.gameObjects).filter(
             (obj) => obj instanceof Goomba
           ),
           powerups: Object.values(this.map.gameObjects).filter(
             (obj) => obj instanceof Mushroom
+          ),
+          coins: Object.values(this.map.gameObjects).filter(
+            (obj) => obj instanceof Coin
           ),
         });
       });
@@ -46,18 +50,13 @@ class Game {
   init() {
     const mapConfig = {
       lowerSrc: "/images/bg.png",
+      coins: 0,
       gameObjects: {
         mario: new Mario({
           isPlayerControlled: true,
           x: 4 * 16,
           y: 5 * 16,
           src: "/images/characters/mario-sprites.png",
-        }),
-        goomba: new Goomba({
-          isPlayerControlled: false,
-          x: 18 * 16,
-          y: 7 * 16,
-          src: "/images/enemies/goomba.png",
         }),
       },
     };
