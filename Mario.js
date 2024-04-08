@@ -4,12 +4,12 @@ class Mario extends GameObject {
     this.isOnGround = false;
     this.velocity = { x: 0, y: 0 };
     this.gravity = 0.4;
-    this.jumpPower = -6;
+    this.jumpPower = -6.2;
     this.respawnPosition = { x: config.x, y: config.y };
     this.sizeState = "normal";
     this.lastDirection = "right";
-    this.baseMoveSpeed = 3;
-    this.boxSize = { x: 16, y: 16 };
+    this.baseMoveSpeed = 2.5;
+    this.boxSize = { x: 16, y: 22 };
     this.isJumping = false;
     this.sprite.pushY = -4;
     this.speedMultiplier = 1;
@@ -23,6 +23,7 @@ class Mario extends GameObject {
 
     this.checkGoombaCollisions(state.goombas);
 
+    this.checkCoinCollision();
     this.checkPowerUpCollisions();
 
     this.updatePosition(state.map);
@@ -53,7 +54,6 @@ class Mario extends GameObject {
       this.isJumping = true;
     }
   }
-  d;
 
   move(direction) {
     this.velocity.x = direction === "left" ? -this.moveSpeed : this.moveSpeed;
@@ -64,6 +64,17 @@ class Mario extends GameObject {
     goombas.forEach((goomba) => {
       if (this.checkCollision(this.getBoundingBox(), goomba.getBoundingBox())) {
         this.handleCollisionWithGoomba();
+      }
+    });
+  }
+
+  checkCoinCollision() {
+    Object.keys(this.map.gameObjects).forEach((key) => {
+      const obj = this.map.gameObjects[key];
+      if (obj instanceof Coin) {
+        if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
+          this.handleCollisionWithCoin(obj, key);
+        }
       }
     });
   }
@@ -91,6 +102,11 @@ class Mario extends GameObject {
     setTimeout(() => {
       this.respawn();
     }, 2000);
+  }
+
+  handleCollisionWithCoin(obj, key) {
+    this.map.coins += 1;
+    delete this.map.gameObjects[key];
   }
 
   handleCollisionWithPowerUp(powerUp, key) {
@@ -151,8 +167,9 @@ class Mario extends GameObject {
       // Shift the world left instead of moving Mario right
 
       this.map.tiles.forEach((tile) => (tile.x -= Math.round(this.velocity.x)));
-      this.map.movePowerUps(-this.velocity.x);
-      this.map.moveGoomba(-this.velocity.x);
+      this.map.movePowerUps(-Math.round(this.velocity.x));
+      this.map.moveGoomba(-Math.round(this.velocity.x));
+      this.map.moveCoins(-Math.round(this.velocity.x));
     } else {
       if (canMoveX) this.x = proposedX;
     }
@@ -164,9 +181,9 @@ class Mario extends GameObject {
 
   getBoundingBox() {
     return {
-      x: Math.round(this.x) + 2,
+      x: Math.round(this.x),
       y: Math.round(this.y),
-      width: this.boxSize.x - 4,
+      width: this.boxSize.x,
       height: this.sprite.imageRenderY + this.sprite.pushY,
     };
   }
