@@ -133,12 +133,9 @@ class Mario extends GameObject {
     let canMoveX = true;
     let canMoveY = true;
 
-    // Correct bounding box calculation if necessary
     const characterBox = this.getBoundingBox();
-
     const nextXBox = { ...characterBox, x: proposedX };
     const nextYBox = { ...characterBox, y: proposedY };
-
     this.isOnGround = false;
 
     map.tiles.forEach((tile) => {
@@ -148,31 +145,25 @@ class Mario extends GameObject {
         canMoveX = false;
       }
       if (this.checkCollision(nextYBox, tileBox)) {
-        // Determine if collision is from above or below
         const isHittingCeiling = proposedY < this.y && this.velocity.y < 0;
-        const isLanding = proposedY > this.y;
+        const isLanding =
+          proposedY > this.y &&
+          characterBox.y + characterBox.height <= tileBox.y;
 
         if (isLanding) {
           this.isOnGround = true;
-          this.velocity.y = 0; // Stop vertical movement
+          this.velocity.y = 0;
+          canMoveY = false;
         } else if (isHittingCeiling) {
           tile.interact();
-          this.velocity.y = 0; // Stop vertical movement, but do not set isOnGround
+          this.velocity.y = 0;
+          canMoveY = false;
         }
-        canMoveY = false;
+        // No else; we don't set canMoveY to false for side collisions
       }
     });
 
-    if (this.x >= 352 / 2 && this.lastDirection === "right" && canMoveX) {
-      // Shift the world left instead of moving Mario right
-
-      this.map.tiles.forEach((tile) => (tile.x -= Math.round(this.velocity.x)));
-      this.map.movePowerUps(-Math.round(this.velocity.x));
-      this.map.moveGoomba(-Math.round(this.velocity.x));
-      this.map.moveCoins(-Math.round(this.velocity.x));
-    } else {
-      if (canMoveX) this.x = proposedX;
-    }
+    if (canMoveX) this.x = proposedX;
     if (canMoveY) this.y = proposedY;
     if (this.isOnGround) {
       this.isJumping = false;
