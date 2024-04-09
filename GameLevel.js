@@ -113,6 +113,19 @@ class GameLevel {
     });
   }
 
+  removeOutOfBoundTiles() {
+    this.tiles = this.tiles.filter((tile) => tile.x + tile.tileSize > 0);
+  }
+
+  updatePosition(shiftX) {
+    // Shift all tiles when Mario reaches the middle of the screen
+    this.tiles.forEach((tile) => (tile.x -= shiftX));
+    this.removeOutOfBoundTiles(); // Remove tiles out of bounds after shifting
+    this.movePowerUps(shiftX);
+    this.moveGoomba(shiftX);
+    this.moveCoins(shiftX);
+  }
+
   spawnBlocks(mapData, xOffset) {
     mapData.forEach((row, rowIndex) => {
       row.forEach((tileCode, colIndex) => {
@@ -185,7 +198,7 @@ class GameLevel {
   moveGoomba(x) {
     Object.values(this.gameObjects).forEach((obj) => {
       if (obj instanceof Goomba) {
-        obj.x += x;
+        obj.x -= x;
       }
     });
   }
@@ -193,7 +206,7 @@ class GameLevel {
   moveCoins(x) {
     Object.values(this.gameObjects).forEach((obj) => {
       if (obj instanceof Coin) {
-        obj.x += x;
+        obj.x -= x;
       }
     });
   }
@@ -201,7 +214,7 @@ class GameLevel {
   movePowerUps(x) {
     Object.values(this.gameObjects).forEach((obj) => {
       if (obj instanceof Mushroom || obj instanceof Star) {
-        obj.x += x;
+        obj.x -= x;
       }
     });
   }

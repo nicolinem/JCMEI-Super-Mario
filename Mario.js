@@ -165,10 +165,8 @@ class Mario extends GameObject {
 
     if (this.x >= 352 / 2 && this.lastDirection === "right" && canMoveX) {
       // Shift the world left instead of moving Mario right
-      this.map.tiles.forEach((tile) => (tile.x -= Math.round(this.velocity.x)));
-      this.map.movePowerUps(-Math.round(this.velocity.x));
-      this.map.moveGoomba(-Math.round(this.velocity.x));
-      this.map.moveCoins(-Math.round(this.velocity.x));
+      const shiftX = Math.round(this.velocity.x);
+      this.map.updatePosition(shiftX);
     } else {
       if (canMoveX) this.x = proposedX;
     }
