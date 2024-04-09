@@ -23,6 +23,8 @@ class Mario extends GameObject {
 
     this.checkGoombaCollisions(state.goombas);
 
+    this.checkKoopaCollisions(state.koopas);
+
     this.checkCoinCollision();
     this.checkPowerUpCollisions();
 
@@ -54,6 +56,11 @@ class Mario extends GameObject {
       this.isJumping = true;
     }
   }
+  bounce() {
+    this.velocity.y = this.jumpPower;
+    this.isOnGround = false;
+    this.isJumping = true;
+  }
 
   move(direction) {
     this.velocity.x = direction === "left" ? -this.moveSpeed : this.moveSpeed;
@@ -63,7 +70,15 @@ class Mario extends GameObject {
   checkGoombaCollisions(goombas) {
     goombas.forEach((goomba) => {
       if (this.checkCollision(this.getBoundingBox(), goomba.getBoundingBox())) {
-        this.handleCollisionWithGoomba();
+        this.handleCollisionWithGoomba(goomba);
+      }
+    });
+  }
+
+  checkKoopaCollisions(koopas) {
+    koopas.forEach((koopa) => {
+      if (this.checkCollision(this.getBoundingBox(), koopa.getBoundingBox())) {
+        this.handleCollisionWithKoopa(koopa);
       }
     });
   }
@@ -90,18 +105,67 @@ class Mario extends GameObject {
     });
   }
 
-  handleCollisionWithGoomba() {
-    this.velocity.x = 0;
-    this.velocity.y = 0;
+  handleCollisionWithGoomba(goomba) {
+    const goombaBox = goomba.getBoundingBox();
+    const characterBox = this.getBoundingBox();
+    let proposedY = this.y + this.velocity.y;
+    const nextYBox = { ...characterBox, y: proposedY };
 
-    this.state = "dead-ish";
+    if (this.checkCollision(nextYBox, goombaBox)) {
+      const willKill =
+        proposedY > this.y &&
+        characterBox.y + characterBox.height - goombaBox.y <= 10;
+      console.log(characterBox.y, characterBox.height, goombaBox.y)
 
-    // Temporarily disable input handling
-    this.disableInput = true;
+      if (willKill) {
+        this.isOnGround = true;
+        this.bounce();
+      } else {
+        this.velocity.x = 0;
+        this.velocity.y = 0;
 
-    setTimeout(() => {
-      this.respawn();
-    }, 2000);
+        this.state = "dead-ish";
+
+        // Temporarily disable input handling
+        this.disableInput = true;
+
+        setTimeout(() => {
+          this.respawn();
+        }, 2000);
+      }
+    }
+  }
+
+  handleCollisionWithKoopa(koopa) {
+
+    const koopaBox = koopa.getBoundingBox();
+    const characterBox = this.getBoundingBox();
+    let proposedY = this.y + this.velocity.y;
+    const nextYBox = { ...characterBox, y: proposedY };
+
+    if (this.checkCollision(nextYBox, koopaBox)) {
+      const willKill =
+        proposedY > this.y &&
+        characterBox.y + characterBox.height - koopaBox.y <= 20;
+      console.log(characterBox.y, characterBox.height, koopaBox.y)
+
+      if (willKill) {
+        this.isOnGround = true;
+        this.bounce();
+      } else {
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+
+        this.state = "dead-ish";
+
+        // Temporarily disable input handling
+        this.disableInput = true;
+
+        setTimeout(() => {
+          this.respawn();
+        }, 2000);
+      }
+    }
   }
 
   handleCollisionWithCoin(obj, key) {

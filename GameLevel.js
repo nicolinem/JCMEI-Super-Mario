@@ -45,7 +45,7 @@ class GameLevel {
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 10, 0, 0, 0, 15, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -177,6 +177,12 @@ class GameLevel {
                 y: y,
               });
               break;
+            case 15:
+              this.gameObjects[`koopa_${x}_${y}`] = new Koopa({
+                x: x,
+                y: y,
+              });
+              break;
             default:
               if (tileTypes[tileCode]) {
                 this.tiles.push(
@@ -199,6 +205,14 @@ class GameLevel {
     Object.values(this.gameObjects).forEach((obj) => {
       if (obj instanceof Goomba) {
         obj.x -= x;
+      }
+    });
+  }
+
+  moveKoopa(x) {
+    Object.values(this.gameObjects).forEach((obj) => {
+      if (obj instanceof Koopa) {
+        obj.x += x;
       }
     });
   }

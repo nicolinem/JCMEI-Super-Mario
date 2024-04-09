@@ -19,7 +19,10 @@ class Game {
           jumping: this.directionInput.jump,
           map: this.map,
           goombas: Object.values(this.map.gameObjects).filter(
-            (obj) => obj instanceof Goomba
+            (obj) => obj instanceof Goomba,
+          ),
+          koopas: Object.values(this.map.gameObjects).filter(
+            (obj) => obj instanceof Koopa,
           ),
           powerups: Object.values(this.map.gameObjects).filter(
             (obj) => obj instanceof Mushroom
