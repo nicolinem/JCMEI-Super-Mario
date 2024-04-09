@@ -3,7 +3,7 @@ class Tile {
     this.x = config.x;
     this.y = config.y;
     this.tileSize = config.tileSize || 16;
-    this.type = config.type;
+    this.type = config.type || [0, 0];
     this.image = new Image();
     this.image.src = "/images/tiles2transp6.png";
     this.imageSizeX = 16;

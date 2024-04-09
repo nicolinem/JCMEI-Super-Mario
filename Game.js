@@ -47,10 +47,36 @@ class Game {
     step();
   }
 
-  init() {
+  showTitleScreen() {
+    const startTitle = () => {
+      const titleScreen = new TitleScreen(this.canvas, (selectedOption) => {
+        if (selectedOption === "Instructions") {
+          this.showInstructions();
+        } else {
+          console.log(`${selectedOption} selected. Starting game...`);
+          if (selectedOption === "Level 1") this.init(1);
+          else this.init(2);
+        }
+      });
+      titleScreen.init();
+    };
+
+    startTitle();
+  }
+
+  showInstructions() {
+    const instructionsPage = new InstructionsPage(this.canvas, () => {
+      instructionsPage.clear(); // Clear instructions page
+      this.showTitleScreen(); // Show the title screen or previous menu
+    });
+    instructionsPage.init();
+  }
+
+  init(mapID) {
     const mapConfig = {
       lowerSrc: "/images/bg.png",
       coins: 0,
+      mapID: mapID,
       gameObjects: {
         mario: new Mario({
           isPlayerControlled: true,
