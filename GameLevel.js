@@ -1,10 +1,11 @@
 class GameLevel {
-  constructor(config) {
+  constructor(config, completionCallback) {
     this.mapID = config.mapID || 1;
     this.gameObjects = config.gameObjects || {};
     this.backgroundImage = new Image();
     this.backgroundImage.src = config.lowerSrc;
     this.tileSize = config.tileSize || 16;
+    this.completionCallback = completionCallback;
 
     this.maps = {
       1: {
@@ -17,10 +18,10 @@ class GameLevel {
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 3, 3, 3, 3, 3, 3],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 1, 1, 1, 1],
           [0, 0, 0, 2, 3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-          [0, 0, 0, 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         ],
         part2: [
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -63,7 +64,7 @@ class GameLevel {
           [0, 0, 0, 0, 23, 24, 24, 24, 24, 24, 24, 25, , 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16, 0, 0],
           [0, 0, 0, 23, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21],
           [0, 0, 0, 28, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22],
         ],
@@ -124,6 +125,7 @@ class GameLevel {
     this.movePowerUps(shiftX);
     this.moveGoomba(shiftX);
     this.moveCoins(shiftX);
+    this.moveFlagpole(shiftX);
   }
 
   spawnBlocks(mapData, xOffset) {
@@ -177,6 +179,12 @@ class GameLevel {
                 y: y,
               });
               break;
+            case 16:
+              this.gameObjects[`flagpole`] = new Flagpole({
+                x: x,
+                y: y,
+              });
+              break;
             default:
               if (tileTypes[tileCode]) {
                 this.tiles.push(
@@ -217,6 +225,21 @@ class GameLevel {
         obj.x -= x;
       }
     });
+  }
+
+  moveFlagpole(x) {
+    Object.values(this.gameObjects).forEach((obj) => {
+      if (obj instanceof Flagpole) {
+        obj.x -= x;
+      }
+    });
+  }
+
+  levelComplete() {
+    const score = this.gameObjects[`flagpole`].calculateScore(
+      this.gameObjects.mario
+    );
+    this.completionCallback(score);
   }
 
   // filling the canvas with bg-image

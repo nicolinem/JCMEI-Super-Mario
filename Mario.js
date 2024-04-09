@@ -17,6 +17,7 @@ class Mario extends GameObject {
   }
 
   update(state) {
+    if (this.state === "flagpole") return;
     this.applyGravity();
 
     this.handleInput(state);
@@ -25,6 +26,7 @@ class Mario extends GameObject {
 
     this.checkCoinCollision();
     this.checkPowerUpCollisions();
+    this.checkFlagCollisions();
 
     this.updatePosition(state.map);
 
@@ -85,6 +87,20 @@ class Mario extends GameObject {
       if (obj instanceof Mushroom || obj instanceof Star) {
         if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
           this.handleCollisionWithPowerUp(obj, key);
+        }
+      }
+    });
+  }
+
+  checkFlagCollisions() {
+    Object.keys(this.map.gameObjects).forEach((key) => {
+      const obj = this.map.gameObjects[key];
+      if (obj instanceof Flagpole) {
+        if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
+          this.velocity.x = 0;
+          this.velocity.y = 0;
+          this.state = "flagpole";
+          this.map.levelComplete();
         }
       }
     });
@@ -245,6 +261,9 @@ class Mario extends GameObject {
   updateSprite() {
     if (this.state === "dead-ish") {
       this.sprite.setAnimation("dead-ish");
+      return;
+    } else if (this.state === "flagpole") {
+      this.sprite.setAnimation("flagpole");
       return;
     }
     const statePrefix = this.sizeState === "normal" ? "" : `${this.sizeState}-`;
