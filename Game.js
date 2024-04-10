@@ -84,7 +84,7 @@ class Game {
       { key: "jump", path: "sounds/smb_jump-small.wav" },
       { key: "powerup", path: "sounds/smb_powerup.wav" },
       { key: "eventBlock", path: "sounds/smb_powerup_appears.wav" },
-      { key: "stomp", path: "sounds/smb_stomp.wav" },
+      { key: "bump", path: "sounds/smb_bump.wav" },
       { key: "gameover", path: "sounds/smb_gameover.wav" },
       { key: "death", path: "sounds/smb_mariodie.wav" },
       { key: "level_clear", path: "sounds/smb_stage_clear.wav" },

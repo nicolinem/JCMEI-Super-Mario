@@ -249,6 +249,7 @@ class Mario extends GameObject {
           canMoveY = false;
         } else if (isHittingCeiling) {
           var sound = tile.interact(this.sizeState);
+          console.log(sound);
           if (sound) {
             this.map.audioManager.playSound(sound);
           }
