@@ -196,7 +196,7 @@ class Mario extends GameObject {
     this.velocity.x = 0;
     this.velocity.y = 0;
     if (powerUp instanceof Mushroom) {
-      this.transformToSuper();
+      if (this.sizeState === "normal") this.transformToSuper();
     } else if (powerUp instanceof Star) {
       this.transformToStar();
     }
@@ -238,7 +238,7 @@ class Mario extends GameObject {
           this.velocity.y = 0;
           canMoveY = false;
         } else if (isHittingCeiling) {
-          tile.interact();
+          tile.interact(this.sizeState);
           this.velocity.y = 0;
           canMoveY = false;
         }
@@ -335,14 +335,14 @@ class Mario extends GameObject {
   }
 
   updateSprite() {
+    const statePrefix = this.sizeState === "normal" ? "" : `${this.sizeState}-`;
     if (this.state === "dead-ish") {
       this.sprite.setAnimation("dead-ish");
       return;
     } else if (this.state === "flagpole") {
-      this.sprite.setAnimation("flagpole");
+      this.sprite.setAnimation(`${statePrefix}flagpole`);
       return;
     }
-    const statePrefix = this.sizeState === "normal" ? "" : `${this.sizeState}-`;
 
     // Exclude "down" from affecting sprite animation
     let direction = this.lastDirection;

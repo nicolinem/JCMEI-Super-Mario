@@ -26,7 +26,7 @@ class Sprite {
         [9, 0],
         [8, 0],
       ],
-      flagpole: [[11, 0]],
+      "idle-flagpole": [[11, 0]],
       "super-idle-left": [[8, 94]],
       "super-walk-right": [
         [1, 94],
@@ -38,6 +38,7 @@ class Sprite {
         [9, 94],
         [8, 94],
       ],
+      "super-flagpole": [[11, 94]],
       "star-idle-left": [[8, 156]],
       "star-walk-right": [
         [1, 156],
@@ -49,6 +50,7 @@ class Sprite {
         [9, 156],
         [8, 156],
       ],
+      "star-flagpole": [[11, 156]],
     };
 
     this.currentAnimation = "idle-right";
