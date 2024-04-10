@@ -22,8 +22,7 @@ class Flagpole extends GameObject {
     const heightReached = baseY - (marioBox.y + marioBox.height);
     const percentageHeightReached = heightReached / this.height;
 
-    const score = Math.round(percentageHeightReached * 1000);
-    console.log(score);
+    const score = Math.round(percentageHeightReached * SCORES.FLAGPOLE_BASE);
     return score;
   }
 

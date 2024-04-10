@@ -1,5 +1,4 @@
 const utils = {
-
   nextPosition(initialX, initialY, direction) {
     let x = initialX;
     let y = initialY;
@@ -15,4 +14,14 @@ const utils = {
     }
     return { x, y };
   },
+};
+
+const SCORES = {
+  COIN: 200,
+  GOOMBA: 100,
+  KOOPA: 150,
+  MUSHROOM: 300,
+  STAR: 500,
+  BREAK_BLOCK: 50,
+  FLAGPOLE_BASE: 1000, // Base score for reaching the flagpole
 };

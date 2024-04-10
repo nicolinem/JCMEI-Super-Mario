@@ -26,7 +26,7 @@ class Sprite {
         [9, 0],
         [8, 0],
       ],
-      "idle-flagpole": [[11, 0]],
+      flagpole: [[11, 0]],
       "super-idle-left": [[8, 94]],
       "super-walk-right": [
         [1, 94],
