@@ -16,6 +16,10 @@ class TitleScreen {
         label: "Instructions",
         description: "Learn how to play and control your character.",
       },
+      {
+        label: "Credits",
+        description: "",
+      },
     ];
     this.currentOptionIndex = 0; // Tracks the current selected menu option
   }
@@ -25,12 +29,12 @@ class TitleScreen {
     this.ctx.font = "16px Arial";
     this.ctx.fillStyle = "#FFFFFF";
     this.ctx.textAlign = "center";
-    this.ctx.fillText("Super Game Title", this.canvas.width / 2, 30);
+    this.ctx.fillText("Super Mario Bros", this.canvas.width / 2, 30);
 
     this.options.forEach((option, index) => {
       this.ctx.fillStyle =
         this.currentOptionIndex === index ? "#FFD700" : "#FFFFFF";
-      this.ctx.fillText(option.label, this.canvas.width / 2, 70 + index * 30);
+      this.ctx.fillText(option.label, this.canvas.width / 2, 60 + index * 30);
     });
 
     // Draw the description of the current option
@@ -39,7 +43,7 @@ class TitleScreen {
     this.ctx.fillText(
       this.options[this.currentOptionIndex].description,
       this.canvas.width / 2,
-      this.canvas.height - 30
+      this.canvas.height - 10
     );
   }
 

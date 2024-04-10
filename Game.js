@@ -85,6 +85,8 @@ class Game {
       this.titleScreen = new TitleScreen(this.canvas, (selectedOption) => {
         if (selectedOption === "Instructions") {
           this.showInstructions();
+        } else if (selectedOption === "Credits") {
+          this.showCreditsScreen();
         } else {
           console.log(`${selectedOption} selected. Starting game...`);
           this.init(selectedOption === "Level 1" ? 1 : 2);
@@ -102,6 +104,14 @@ class Game {
       this.showTitleScreen();
     });
     instructionsPage.init();
+  }
+
+  showCreditsScreen() {
+    const creditsPage = new CreditsScreen(this.canvas, () => {
+      creditsPage.clear(); // Clear credits page
+      this.showTitleScreen(); // Navigate to Title Screen after showing credits
+    });
+    creditsPage.init();
   }
 
   handleLevelCompletion() {
