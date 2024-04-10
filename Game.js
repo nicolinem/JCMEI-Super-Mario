@@ -15,6 +15,7 @@ class Game {
       return;
     }
     this.isRunning = true;
+
     const step = () => {
       if (!this.isRunning) return;
       // Clear off the canvas
@@ -29,6 +30,9 @@ class Game {
           goombas: Object.values(this.map.gameObjects).filter(
             (obj) => obj instanceof Goomba
           ),
+          koopas: Object.values(this.map.gameObjects).filter(
+            (obj) => obj instanceof Koopa
+          ),
           powerups: Object.values(this.map.gameObjects).filter(
             (obj) => obj instanceof Mushroom
           ),
@@ -39,14 +43,12 @@ class Game {
       });
 
       // Draw Background
-      this.map.drawBackgroundImage(this.ctx); 
+      this.map.drawBackgroundImage(this.ctx);
 
       // Draw Game Objects
       Object.values(this.map.gameObjects).forEach((object) => {
         object.sprite.draw(this.ctx);
       });
-
-
 
       this.animationFrameId = requestAnimationFrame(step);
     };
@@ -54,17 +56,20 @@ class Game {
   }
 
   showTitleScreen() {
+    if (this.titleScreen) {
+      this.titleScreen.removeEventListeners();
+    }
+
     const startTitle = () => {
-      const titleScreen = new TitleScreen(this.canvas, (selectedOption) => {
+      this.titleScreen = new TitleScreen(this.canvas, (selectedOption) => {
         if (selectedOption === "Instructions") {
           this.showInstructions();
         } else {
           console.log(`${selectedOption} selected. Starting game...`);
-          if (selectedOption === "Level 1") this.init(1);
-          else this.init(2);
+          this.init(selectedOption === "Level 1" ? 1 : 2);
         }
       });
-      titleScreen.init();
+      this.titleScreen.init();
     };
 
     startTitle();
@@ -73,7 +78,7 @@ class Game {
   showInstructions() {
     const instructionsPage = new InstructionsPage(this.canvas, () => {
       instructionsPage.clear(); // Clear instructions page
-      this.showTitleScreen(); 
+      this.showTitleScreen();
     });
     instructionsPage.init();
   }
@@ -84,6 +89,7 @@ class Game {
     this.animationFrameId = null;
 
     setTimeout(() => {
+      // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
       this.ctx.fillStyle = "#000";
       this.ctx.font = "16px Arial";
       this.ctx.fillStyle = "#FFFFFF";
@@ -95,23 +101,31 @@ class Game {
       );
 
       this.ctx.fillText(
-        "Click anywhere to return to the title screen",
+        "Press any key or click to return to the title screen",
         this.canvas.width / 2,
         this.canvas.height / 2 + 30
       );
 
-      this.canvas.addEventListener(
-        "click",
-        () => {
-          this.showTitleScreen();
-        },
-        { once: true }
-      ),
-        5000;
-    });
+      const returnToTitleScreenHandler = () => {
+        this.canvas.removeEventListener("click", returnToTitleScreenHandler);
+        document.removeEventListener("keydown", returnToTitleScreenHandler);
+        this.showTitleScreen();
+      };
+
+      this.canvas.addEventListener("click", returnToTitleScreenHandler, {
+        once: true,
+      });
+      document.addEventListener("keydown", returnToTitleScreenHandler, {
+        once: true,
+      });
+    }, 1000);
   }
 
   init(mapID) {
+    if (this.titleScreen) {
+      this.titleScreen.removeEventListeners();
+    }
+
     const mapConfig = {
       lowerSrc: "/images/bg.png",
       coins: 0,

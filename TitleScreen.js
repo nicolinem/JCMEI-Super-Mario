@@ -60,8 +60,14 @@ class TitleScreen {
     this.onSelectionDone(option.label);
   }
 
+  removeEventListeners() {
+    if (this.keydownEventListener) {
+      document.removeEventListener("keydown", this.keydownEventListener);
+    }
+  }
+
   addEventListeners() {
-    document.addEventListener("keydown", (e) => {
+    this.keydownEventListener = (e) => {
       switch (e.key) {
         case "ArrowUp":
           this.navigate("up");
@@ -73,7 +79,9 @@ class TitleScreen {
           this.selectOption();
           break;
       }
-    });
+    };
+
+    document.addEventListener("keydown", this.keydownEventListener);
   }
 
   init() {
