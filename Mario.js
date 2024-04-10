@@ -14,10 +14,11 @@ class Mario extends GameObject {
     this.sprite.pushY = -4;
     this.speedMultiplier = 1;
     this.moveSpeed = this.baseMoveSpeed * this.speedMultiplier;
+    console.log(this.baseMoveSpeed, this.moveSpeed);
   }
 
   update(state) {
-    if (this.state === "flagpole") return;
+    if (this.state === "flagpole" || this.state === "dead-ish") return;
     this.applyGravity();
 
     this.handleInput(state);
@@ -145,23 +146,12 @@ class Mario extends GameObject {
       const willKill =
         proposedY > this.y &&
         characterBox.y + characterBox.height - goombaBox.y <= 10;
-      console.log(characterBox.y, characterBox.height, goombaBox.y);
 
       if (willKill) {
         this.isOnGround = true;
         this.bounce();
       } else {
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-
-        this.state = "dead-ish";
-
-        // Temporarily disable input handling
-        this.disableInput = true;
-
-        setTimeout(() => {
-          this.respawn();
-        }, 2000);
+        this.die();
       }
     }
   }
@@ -191,7 +181,7 @@ class Mario extends GameObject {
         this.disableInput = true;
 
         setTimeout(() => {
-          this.respawn();
+          this.die();
         }, 2000);
       }
     }
@@ -256,6 +246,16 @@ class Mario extends GameObject {
       }
     });
 
+    if (proposedX < 0) {
+      canMoveX = false;
+      proposedX = 0;
+    }
+
+    if (proposedY > 200) {
+      console.log("Mario fell off the map");
+      this.die();
+    }
+
     if (this.x >= 352 / 2 && this.lastDirection === "right" && canMoveX) {
       // Shift the world left instead of moving Mario right
       const shiftX = Math.round(this.velocity.x);
@@ -279,22 +279,21 @@ class Mario extends GameObject {
     };
   }
 
-  respawn() {
-    this.state = "alive";
-    this.x = this.respawnX;
-    this.y = this.respawnY;
+  die() {
+    this.velocity.x = 0;
+    this.velocity.y = 0;
+    this.state = "dead-ish";
+    this.sprite.setAnimation("dead-ish");
 
-    this.sprite.setAnimation("idle-right");
-
-    this.disableInput = false;
+    setTimeout(() => {
+      this.map.resetLevel();
+    }, 2000);
   }
 
   transformSize(state, config) {
-    // Check if a state change is needed
     if (this.sizeState !== state) {
       this.sizeState = state;
 
-      // Apply the configuration changes
       if (config) {
         this.sprite.imageSizeY = config.imageSizeY || this.sprite.imageSizeY;
         this.sprite.imageRenderY =

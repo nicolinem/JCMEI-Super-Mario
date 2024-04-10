@@ -6,6 +6,7 @@ class Game {
     this.map = null;
     this.ctx.imageSmoothingEnabled = false;
     this.handleLevelCompletion = this.handleLevelCompletion.bind(this);
+    this.resetLevel = this.resetLevel.bind(this);
     this.animationFrameId = null;
     this.isRunning = false;
   }
@@ -121,6 +122,30 @@ class Game {
     }, 1000);
   }
 
+  resetLevel() {
+    this.map = new GameLevel(
+      {
+        lowerSrc: "/images/bg.png", // Adjust this path as necessary
+        coins: 0,
+        mapID: this.map.mapID, // Keep the current level ID or set as needed
+        gameObjects: {
+          mario: new Mario({
+            isPlayerControlled: true,
+            x: 4 * 16,
+            y: 5 * 16,
+            src: "/images/characters/mario-sprites.png",
+          }),
+        },
+      },
+      this.handleLevelCompletion,
+      this.resetLevel
+    );
+    this.map.mountObjects();
+
+    this.directionInput.init(this.map.gameObjects.mario);
+    this.startGameLoop();
+  }
+
   init(mapID) {
     if (this.titleScreen) {
       this.titleScreen.removeEventListeners();
@@ -140,7 +165,11 @@ class Game {
       },
     };
 
-    this.map = new GameLevel(mapConfig, this.handleLevelCompletion);
+    this.map = new GameLevel(
+      mapConfig,
+      this.handleLevelCompletion,
+      this.resetLevel
+    );
     this.map.mountObjects();
 
     this.directionInput = new DirectionInput();
