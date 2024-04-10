@@ -34,6 +34,15 @@ class DirectionInput {
       if (e.code === "Digit2") {
         gameInstance.switchWorld(2);
       }
+      if (e.code === "KeyM") {
+        gameInstance.map.gameObjects.mario.transformToSuper();
+      }
+      if (e.code === "KeyN") {
+        gameInstance.map.gameObjects.mario.transformToNormal();
+      }
+      if (e.code === "KeyG") {
+        gameInstance.map.gameObjects.mario.transformToStar();
+      }
 
       // Existing transformations and speed changes
       if (e.code === "ShiftLeft" || e.code === "ShiftRight") {

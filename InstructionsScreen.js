@@ -18,7 +18,7 @@ class InstructionsPage {
       "Run: Hold Shift",
       "Become Normal: Press N",
       "Become Super: Press M",
-      "Become Star: Press L",
+      "Become Star: Press G",
       "Change World: Press '1' for World 1, '2' for World 2",
       "",
       "Click anywhere to return to the title screen.",
