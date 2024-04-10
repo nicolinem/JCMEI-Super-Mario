@@ -14,7 +14,6 @@ class Mario extends GameObject {
     this.sprite.pushY = -4;
     this.speedMultiplier = 1;
     this.moveSpeed = this.baseMoveSpeed * this.speedMultiplier;
-    console.log(this.baseMoveSpeed, this.moveSpeed);
   }
 
   update(state) {
@@ -167,13 +166,11 @@ class Mario extends GameObject {
       const willKill =
         proposedY > this.y &&
         characterBox.y + characterBox.height - koopaBox.y <= 20;
-      console.log(characterBox.y, characterBox.height, koopaBox.y);
 
       if (willKill) {
         this.isOnGround = true;
         this.bounce();
         this.map.increaseScore(SCORES.KOOPA);
-        console.log(this.map.score);
       } else {
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -185,7 +182,7 @@ class Mario extends GameObject {
 
         setTimeout(() => {
           this.die();
-        }, 2000);
+        }, 1000);
       }
     }
   }
@@ -258,7 +255,6 @@ class Mario extends GameObject {
     }
 
     if (proposedY > 200) {
-      console.log("Mario fell off the map");
       this.die();
     }
 
@@ -292,7 +288,7 @@ class Mario extends GameObject {
     this.sprite.setAnimation("dead-ish");
 
     setTimeout(() => {
-      this.map.resetLevel();
+      this.map.death();
     }, 2000);
   }
 

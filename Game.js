@@ -6,9 +6,13 @@ class Game {
     this.map = null;
     this.ctx.imageSmoothingEnabled = false;
     this.handleLevelCompletion = this.handleLevelCompletion.bind(this);
+    this.handleDeath = this.handleDeath.bind(this);
     this.resetLevel = this.resetLevel.bind(this);
     this.animationFrameId = null;
     this.isRunning = false;
+    this.timer = 300;
+    this.lastTime = Date.now();
+    this.MarioLives = 3;
   }
 
   startGameLoop() {
@@ -19,6 +23,18 @@ class Game {
 
     const step = () => {
       if (!this.isRunning) return;
+
+      const currentTime = Date.now();
+      const deltaTime = (currentTime - this.lastTime) / 1000; // Convert ms to seconds
+      this.lastTime = currentTime; // Update lastTime to the current time
+
+      if (this.timer <= 0) {
+        this.handleGameOver();
+        return;
+      }
+
+      this.timer -= deltaTime;
+
       // Clear off the canvas
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -52,6 +68,8 @@ class Game {
       });
 
       this.map.drawScore(this.ctx);
+      this.drawTimer();
+      this.drawLives();
 
       this.animationFrameId = requestAnimationFrame(step);
     };
@@ -86,10 +104,13 @@ class Game {
     instructionsPage.init();
   }
 
-  handleLevelCompletion(score) {
+  handleLevelCompletion() {
     this.isRunning = false;
     cancelAnimationFrame(this.animationFrameId);
     this.animationFrameId = null;
+
+    const timeBonus = Math.ceil(this.timer) * 3;
+    this.map.score += timeBonus;
 
     setTimeout(() => {
       // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
@@ -98,7 +119,7 @@ class Game {
       this.ctx.fillStyle = "#FFFFFF";
       this.ctx.textAlign = "center";
       this.ctx.fillText(
-        `Score: ${score}`,
+        `Score: ${this.map.score}`,
         this.canvas.width / 2,
         this.canvas.height / 2
       );
@@ -124,6 +145,21 @@ class Game {
     }, 1000);
   }
 
+  drawTimer() {
+    const formattedTime = Math.ceil(this.timer);
+    this.ctx.fillStyle = "#FFFFFF"; // Red color for the timer font
+    this.ctx.font = "16px Arial"; // Set the font size and type
+    this.ctx.textAlign = "left"; // Align text to the left
+    this.ctx.fillText(`Time: ${formattedTime}`, 10, 40); // Position the timer below the score
+  }
+
+  drawLives() {
+    this.ctx.fillStyle = "#FFFFFF"; // White color for the text
+    this.ctx.font = "16px Arial"; // Font size and style
+    this.ctx.textAlign = "left"; // Alignment of text
+    this.ctx.fillText(`Lives: ${this.MarioLives}`, 10, 60); // Position the lives display below the timer
+  }
+
   resetLevel() {
     this.map = new GameLevel(
       {
@@ -140,12 +176,46 @@ class Game {
         },
       },
       this.handleLevelCompletion,
-      this.resetLevel
+      this.handleDeath
     );
+    this.timer = 300;
     this.map.mountObjects();
 
     this.directionInput.init(this.map.gameObjects.mario);
     this.startGameLoop();
+  }
+
+  handleGameOver() {
+    this.isRunning = false;
+    cancelAnimationFrame(this.animationFrameId);
+    this.animationFrameId = null;
+
+    // Display Game Over message
+    this.ctx.fillStyle = "#FF0000";
+    this.ctx.font = "24px Arial";
+    this.ctx.textAlign = "center";
+    this.ctx.fillText(
+      "GAME OVER",
+      this.canvas.width / 2,
+      this.canvas.height / 2
+    );
+
+    this.canvas.addEventListener(
+      "click",
+      () => {
+        this.showTitleScreen(); // Return to title screen on click
+      },
+      { once: true }
+    );
+  }
+
+  handleDeath() {
+    this.MarioLives -= 1;
+    if (this.MarioLives === 0) {
+      this.handleGameOver();
+    } else {
+      this.resetLevel();
+    }
   }
 
   init(mapID) {
@@ -170,7 +240,7 @@ class Game {
     this.map = new GameLevel(
       mapConfig,
       this.handleLevelCompletion,
-      this.resetLevel
+      this.handleDeath
     );
     this.map.mountObjects();
 

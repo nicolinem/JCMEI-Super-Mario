@@ -1,12 +1,13 @@
 class GameLevel {
-  constructor(config, completionCallback, dieCallback) {
+  constructor(config, completionCallback, deathCallback) {
     this.mapID = config.mapID || 1;
     this.gameObjects = config.gameObjects || {};
     this.backgroundImage = new Image();
     this.backgroundImage.src = config.lowerSrc;
     this.tileSize = config.tileSize || 16;
     this.completionCallback = completionCallback;
-    this.dieCallback = dieCallback;
+    this.deathCallback = deathCallback;
+
     this.score = 0;
 
     this.maps = {
@@ -270,12 +271,11 @@ class GameLevel {
     this.score += this.gameObjects[`flagpole`].calculateScore(
       this.gameObjects.mario
     );
-    this.completionCallback(this.score);
+    this.completionCallback();
   }
 
-  resetLevel() {
-    console.log("reset level");
-    this.dieCallback();
+  death() {
+    this.deathCallback();
   }
 
   increaseScore(score) {
