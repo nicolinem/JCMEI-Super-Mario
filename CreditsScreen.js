@@ -20,7 +20,7 @@ class CreditsScreen {
     const credits = [
       "By: Nicoline and Julius",
       "Audio: themushroomkingdom.net/media/smb/wav",
-      "SPrites: spriters-resource.com/nes/supermariobros",
+      "sprites: spriters-resource.com/nes/supermariobros",
       "Click anywhere to return to the title screen.",
     ];
 
