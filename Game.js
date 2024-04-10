@@ -93,6 +93,13 @@ class Game {
     this.showTitleScreen();
   }
 
+  switchWorld(worldNumber) {
+    const mapID = worldNumber;
+    this.MarioLives = 3;
+    this.timer = 300;
+    this.init(mapID);
+  }
+
   showTitleScreen() {
     if (this.titleScreen) {
       this.titleScreen.removeEventListeners();
@@ -209,7 +216,7 @@ class Game {
     this.timer = 300;
     this.map.mountObjects();
 
-    this.directionInput.init(this.map.gameObjects.mario);
+    this.directionInput.init(this);
     this.startGameLoop();
   }
 
@@ -276,7 +283,7 @@ class Game {
     this.map.mountObjects();
 
     this.directionInput = new DirectionInput();
-    this.directionInput.init(this.map.gameObjects.mario);
+    this.directionInput.init(this);
 
     this.startGameLoop();
   }
