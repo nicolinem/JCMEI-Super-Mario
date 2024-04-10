@@ -13,6 +13,7 @@ class Game {
     this.timer = 300;
     this.lastTime = Date.now();
     this.MarioLives = 3;
+    this.audioManager = null;
   }
 
   startGameLoop() {
@@ -74,6 +75,22 @@ class Game {
       this.animationFrameId = requestAnimationFrame(step);
     };
     step();
+  }
+
+  start() {
+    this.audioManager = new AudioManager();
+    this.audioManager.loadAllSounds([
+      { key: "coin", path: "sounds/smb_coin.wav" },
+      { key: "jump", path: "sounds/smb_jump-small.wav" },
+      { key: "powerup", path: "sounds/smb_powerup.wav" },
+      { key: "eventBlock", path: "sounds/smb_powerup_appears.wav" },
+      { key: "stomp", path: "sounds/smb_stomp.wav" },
+      { key: "gameover", path: "sounds/smb_gameover.wav" },
+      { key: "death", path: "sounds/smb_mariodie.wav" },
+      { key: "level_clear", path: "sounds/smb_stage_clear.wav" },
+      { key: "break_block", path: "sounds/smb_breakblock.wav" },
+    ]);
+    this.showTitleScreen();
   }
 
   showTitleScreen() {
@@ -175,6 +192,7 @@ class Game {
       {
         lowerSrc: "/images/bg.png", // Adjust this path as necessary
         coins: 0,
+        audioManager: this.audioManager,
         mapID: this.map.mapID, // Keep the current level ID or set as needed
         gameObjects: {
           mario: new Mario({
@@ -222,8 +240,10 @@ class Game {
   handleDeath() {
     this.MarioLives -= 1;
     if (this.MarioLives === 0) {
+      this.audioManager.play("gameover");
       this.handleGameOver();
     } else {
+      this.audioManager.play("death");
       this.resetLevel();
     }
   }
@@ -237,6 +257,7 @@ class Game {
       lowerSrc: "/images/bg.png",
       coins: 0,
       mapID: mapID,
+      audioManager: this.audioManager,
       gameObjects: {
         mario: new Mario({
           isPlayerControlled: true,

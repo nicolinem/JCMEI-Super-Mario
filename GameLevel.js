@@ -7,6 +7,7 @@ class GameLevel {
     this.tileSize = config.tileSize || 16;
     this.completionCallback = completionCallback;
     this.deathCallback = deathCallback;
+    this.audioManager = config.audioManager;
 
     this.score = 0;
 
@@ -271,6 +272,7 @@ class GameLevel {
     this.score += this.gameObjects[`flagpole`].calculateScore(
       this.gameObjects.mario
     );
+    this.audioManager.playSound("level_clear");
     this.completionCallback();
   }
 

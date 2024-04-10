@@ -53,6 +53,7 @@ class Mario extends GameObject {
 
   jump() {
     if (!this.isJumping && this.isOnGround) {
+      this.map.audioManager.playSound("jump");
       this.velocity.y = this.jumpPower;
       this.isOnGround = false;
       this.isJumping = true;
@@ -60,6 +61,8 @@ class Mario extends GameObject {
   }
   bounce() {
     this.velocity.y = this.jumpPower;
+    this.map.audioManager.playSound("jump");
+
     this.isOnGround = false;
     this.isJumping = true;
   }
@@ -90,7 +93,9 @@ class Mario extends GameObject {
       const obj = this.map.gameObjects[key];
       if (obj instanceof Coin) {
         if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
-          this.handleCollisionWithCoin(obj, key);
+          setTimeout(() => {
+            this.handleCollisionWithCoin(obj, key);
+          }, 10);
         }
       }
     });
@@ -190,10 +195,12 @@ class Mario extends GameObject {
   handleCollisionWithCoin(obj, key) {
     this.map.coins += 1;
     this.map.increaseScore(SCORES.COIN);
+    this.map.audioManager.playSound("coin");
     delete this.map.gameObjects[key];
   }
 
   handleCollisionWithPowerUp(powerUp, key) {
+    this.map.audioManager.playSound("powerup");
     this.velocity.x = 0;
     this.velocity.y = 0;
     if (powerUp instanceof Mushroom) {
@@ -241,7 +248,10 @@ class Mario extends GameObject {
           this.velocity.y = 0;
           canMoveY = false;
         } else if (isHittingCeiling) {
-          tile.interact(this.sizeState);
+          var sound = tile.interact(this.sizeState);
+          if (sound) {
+            this.map.audioManager.playSound(sound);
+          }
           this.velocity.y = 0;
           canMoveY = false;
         }
