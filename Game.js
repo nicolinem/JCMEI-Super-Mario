@@ -247,10 +247,10 @@ class Game {
   handleDeath() {
     this.MarioLives -= 1;
     if (this.MarioLives === 0) {
-      this.audioManager.play("gameover");
+      this.audioManager.playSound("gameover");
       this.handleGameOver();
     } else {
-      this.audioManager.play("death");
+      this.audioManager.playSound("death");
       this.resetLevel();
     }
   }

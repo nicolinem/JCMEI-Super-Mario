@@ -17,5 +17,7 @@ const tileTypes = {
   25: { name: "DFloatingFlat", spriteCoordinates: [1, 9] },
   26: { name: "DFloatCornerLeft", spriteCoordinates: [0, 9] },
   27: { name: "DFloatCornerRight", spriteCoordinates: [2, 9] },
+  28: { name: "DUndergroundLeft", spriteCoordinates: [0, 7] },
+  29: { name: "DUndergroundRight", spriteCoordinates: [2, 7] },
   30: { name: "Breakable", spriteCoordinates: [0, 7] },
 };
