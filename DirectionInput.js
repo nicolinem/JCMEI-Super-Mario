@@ -60,7 +60,9 @@ class DirectionInput {
       if (e.code === "KeyW" || e.code === "ArrowUp") {
         this.jumping = false;
       }
-      // Reset speed on key up, etc.
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+        gameInstance.map.gameObjects.mario.resetSpeed();
+      }
     });
   }
 }
