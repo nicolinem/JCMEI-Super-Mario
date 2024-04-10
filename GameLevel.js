@@ -46,8 +46,8 @@ class GameLevel {
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 0, 10, 0, 0, 0, 15, 0, 0],
+          [0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 30, 10, 0, 0, 0, 15, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -117,6 +117,10 @@ class GameLevel {
 
   removeOutOfBoundTiles() {
     this.tiles = this.tiles.filter((tile) => tile.x + tile.tileSize > 0);
+  }
+
+  removeTile(tile) {
+    this.tiles = this.tiles.filter((t) => t !== tile);
   }
 
   updatePosition(shiftX) {
@@ -191,6 +195,17 @@ class GameLevel {
                 x: x,
                 y: y,
               });
+              break;
+            case 30:
+              this.tiles.push(
+                new BreakableTile({
+                  x: x,
+                  y: y,
+                  tileSize: this.tileSize,
+                  type: [6, 0],
+                  map: this,
+                })
+              );
               break;
             default:
               if (tileTypes[tileCode]) {
