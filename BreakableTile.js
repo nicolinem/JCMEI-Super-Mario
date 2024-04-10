@@ -10,6 +10,7 @@ class BreakableTile extends Tile {
   interact(state) {
     if (state === "normal") return;
     this.map.removeTile(this);
+    this.map.increaseScore(SCORES.BREAK_BLOCK);
   }
 
   draw(ctx) {

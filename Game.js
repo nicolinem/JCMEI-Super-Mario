@@ -51,6 +51,8 @@ class Game {
         object.sprite.draw(this.ctx);
       });
 
+      this.map.drawScore(this.ctx);
+
       this.animationFrameId = requestAnimationFrame(step);
     };
     step();

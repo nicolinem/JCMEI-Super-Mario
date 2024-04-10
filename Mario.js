@@ -150,6 +150,7 @@ class Mario extends GameObject {
       if (willKill) {
         this.isOnGround = true;
         this.bounce();
+        this.map.increaseScore(SCORES.GOOMBA);
       } else {
         this.die();
       }
@@ -171,6 +172,8 @@ class Mario extends GameObject {
       if (willKill) {
         this.isOnGround = true;
         this.bounce();
+        this.map.increaseScore(SCORES.KOOPA);
+        console.log(this.map.score);
       } else {
         this.velocity.x = 0;
         this.velocity.y = 0;
@@ -189,6 +192,7 @@ class Mario extends GameObject {
 
   handleCollisionWithCoin(obj, key) {
     this.map.coins += 1;
+    this.map.increaseScore(SCORES.COIN);
     delete this.map.gameObjects[key];
   }
 
@@ -201,7 +205,9 @@ class Mario extends GameObject {
       this.transformToStar();
     }
     this.disableInput = true;
-
+    this.map.increaseScore(
+      powerUp instanceof Mushroom ? SCORES.MUSHROOM : SCORES.STAR
+    );
     // Remove the power-up from the gameObjects map
     delete this.map.gameObjects[key];
 

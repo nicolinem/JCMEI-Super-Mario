@@ -7,6 +7,7 @@ class GameLevel {
     this.tileSize = config.tileSize || 16;
     this.completionCallback = completionCallback;
     this.dieCallback = dieCallback;
+    this.score = 0;
 
     this.maps = {
       1: {
@@ -266,15 +267,26 @@ class GameLevel {
   }
 
   levelComplete() {
-    const score = this.gameObjects[`flagpole`].calculateScore(
+    this.score += this.gameObjects[`flagpole`].calculateScore(
       this.gameObjects.mario
     );
-    this.completionCallback(score);
+    this.completionCallback(this.score);
   }
 
   resetLevel() {
     console.log("reset level");
     this.dieCallback();
+  }
+
+  increaseScore(score) {
+    this.score += score;
+  }
+
+  drawScore(ctx) {
+    ctx.fillStyle = "#FFFFFF"; // White color for the score font
+    ctx.font = "16px Arial"; // Set the font size and type
+    ctx.textAlign = "left"; // Align text to the left
+    ctx.fillText(`Score: ${this.score}`, 10, 20); // Position the score at x=10, y=20
   }
 
   // filling the canvas with bg-image
