@@ -8,9 +8,10 @@ class BreakableTile extends Tile {
   }
 
   interact(state) {
-    if (state === "normal") return;
+    if (state === "normal") return "stomp";
     this.map.removeTile(this);
     this.map.increaseScore(SCORES.BREAK_BLOCK);
+    return "break_block";
   }
 
   draw(ctx) {

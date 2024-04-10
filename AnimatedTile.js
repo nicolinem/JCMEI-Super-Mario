@@ -43,6 +43,8 @@ class AnimatedTile extends Tile {
       this.hasItem = false;
       this.updateSpriteSheet();
     }
+
+    return "eventBlock";
   }
 
   updateSpriteSheet() {

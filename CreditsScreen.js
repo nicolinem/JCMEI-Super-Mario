@@ -14,16 +14,18 @@ class CreditsScreen {
     // Title
     this.ctx.fillText("Game Credits", this.canvas.width / 2, 30);
 
+    this.ctx.font = "12px Arial";
+
     // Credits
     const credits = [
-      "Nicoline",
-      "Julius",
-      "",
+      "By: Nicoline and Julius",
+      "Audio: themushroomkingdom.net/media/smb/wav",
+      "SPrites: spriters-resource.com/nes/supermariobros",
       "Click anywhere to return to the title screen.",
     ];
 
     credits.forEach((line, index) => {
-      this.ctx.fillText(line, this.canvas.width / 2, 70 + index * 30);
+      this.ctx.fillText(line, this.canvas.width / 2, 60 + index * 30);
     });
   }
 
