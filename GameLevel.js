@@ -1,11 +1,12 @@
 class GameLevel {
-  constructor(config, completionCallback) {
+  constructor(config, completionCallback, dieCallback) {
     this.mapID = config.mapID || 1;
     this.gameObjects = config.gameObjects || {};
     this.backgroundImage = new Image();
     this.backgroundImage.src = config.lowerSrc;
     this.tileSize = config.tileSize || 16;
     this.completionCallback = completionCallback;
+    this.dieCallback = dieCallback;
 
     this.maps = {
       1: {
@@ -254,6 +255,11 @@ class GameLevel {
       this.gameObjects.mario
     );
     this.completionCallback(score);
+  }
+
+  resetLevel() {
+    console.log("reset level");
+    this.dieCallback();
   }
 
   // filling the canvas with bg-image
