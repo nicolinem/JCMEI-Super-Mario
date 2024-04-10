@@ -14,6 +14,8 @@ class Mario extends GameObject {
     this.sprite.pushY = -4;
     this.speedMultiplier = 1;
     this.moveSpeed = this.baseMoveSpeed * this.speedMultiplier;
+    this.isInvincible = false;
+    this.isBlinking = false;
   }
 
   update(state) {
@@ -22,9 +24,10 @@ class Mario extends GameObject {
 
     this.handleInput(state);
 
-    this.checkGoombaCollisions(state.goombas);
-
-    this.checkKoopaCollisions(state.koopas, state.goombas);
+    if (!this.isBlinking) {
+      this.checkGoombaCollisions(state.goombas);
+      this.checkKoopaCollisions(state.koopas, state.goombas);
+    }
 
     this.checkCoinCollision();
     this.checkPowerUpCollisions();
@@ -76,7 +79,9 @@ class Mario extends GameObject {
     Object.keys(this.map.gameObjects).forEach((key) => {
       const goomba = this.map.gameObjects[key];
       if (goomba instanceof Goomba) {
-        if (this.checkCollision(this.getBoundingBox(), goomba.getBoundingBox())) {
+        if (
+          this.checkCollision(this.getBoundingBox(), goomba.getBoundingBox())
+        ) {
           this.handleCollisionWithGoomba(key);
         }
       }
@@ -88,8 +93,13 @@ class Mario extends GameObject {
       if (koopa.isSpinning) {
         Object.keys(this.map.gameObjects).forEach((key) => {
           const goomba = this.map.gameObjects[key];
-          if (goomba instanceof Goomba){
-            if (koopa.checkCollision(koopa.getBoundingBox(), goomba.getBoundingBox())) {
+          if (goomba instanceof Goomba) {
+            if (
+              koopa.checkCollision(
+                koopa.getBoundingBox(),
+                goomba.getBoundingBox()
+              )
+            ) {
               delete this.map.gameObjects[key];
             }
           }
@@ -154,6 +164,10 @@ class Mario extends GameObject {
   }
 
   handleCollisionWithGoomba(key) {
+    if (this.isInvincible) {
+      delete this.map.gameObjects[key];
+      return;
+    }
     const goomba = this.map.gameObjects[key];
     const goombaBox = goomba.getBoundingBox();
     const characterBox = this.getBoundingBox();
@@ -177,6 +191,10 @@ class Mario extends GameObject {
   }
 
   handleCollisionWithKoopa(koopa) {
+    if (this.isInvincible) {
+      koopa.kill();
+      return;
+    }
     const koopaBox = koopa.getBoundingBox();
     const characterBox = this.getBoundingBox();
     let proposedY = this.y + this.velocity.y;
@@ -192,23 +210,11 @@ class Mario extends GameObject {
         this.bounce();
         koopa.kill();
         this.map.increaseScore(SCORES.KOOPA);
-      } else if (koopa.isDead) { // Koopa is in dead-shell state
-        // Determine direction based on Mario's position relative to the Koopa
-        const direction = characterBox.x < koopaBox.x ? 'right' : 'left';
+      } else if (koopa.isDead) {
+        const direction = characterBox.x < koopaBox.x ? "right" : "left";
         koopa.spin(direction);
-
-      } else { // Koopa is not dead and Mario doesn't land on top
-        this.velocity.x = 0;
-        this.velocity.y = 0;
-
-        this.state = "dead-ish";
-
-        // Temporarily disable input handling
-        this.disableInput = true;
-
-        setTimeout(() => {
-          this.respawn();
-        }, 2000);
+      } else {
+        this.die();
       }
     }
   }
@@ -314,6 +320,15 @@ class Mario extends GameObject {
   }
 
   die() {
+    if (this.sizeState === "super") {
+      this.isBlinking = true;
+
+      this.transformToNormal();
+      setTimeout(() => {
+        this.isBlinking = false;
+      }, 2000);
+      return;
+    }
     this.velocity.x = 0;
     this.velocity.y = 0;
     this.state = "dead-ish";
@@ -355,6 +370,11 @@ class Mario extends GameObject {
         ? { imageSizeY: 56, imageRenderY: 28, pushY: 0, yAdjust: -8 }
         : null;
     this.transformSize("star", config);
+    this.isInvincible = true;
+    setTimeout(() => {
+      this.isInvincible = false;
+      this.transformToSuper();
+    }, 5000);
   }
 
   transformToNormal() {
