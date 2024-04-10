@@ -8,7 +8,7 @@ class Mario extends GameObject {
     this.respawnPosition = { x: config.x, y: config.y };
     this.sizeState = "normal";
     this.lastDirection = "right";
-    this.baseMoveSpeed = 2.5;
+    this.baseMoveSpeed = 3;
     this.boxSize = { x: 16, y: 22 };
     this.isJumping = false;
     this.sprite.pushY = -4;
@@ -17,6 +17,7 @@ class Mario extends GameObject {
   }
 
   update(state) {
+    if (this.state === "flagpole") return;
     this.applyGravity();
 
     this.handleInput(state);
@@ -27,6 +28,7 @@ class Mario extends GameObject {
 
     this.checkCoinCollision();
     this.checkPowerUpCollisions();
+    this.checkFlagCollisions();
 
     this.updatePosition(state.map);
 
@@ -105,6 +107,34 @@ class Mario extends GameObject {
     });
   }
 
+  checkFlagCollisions() {
+    Object.keys(this.map.gameObjects).forEach((key) => {
+      const obj = this.map.gameObjects[key];
+      if (obj instanceof Flagpole) {
+        if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
+          this.velocity.x = 0;
+          this.velocity.y = 0;
+          this.state = "flagpole";
+          this.map.levelComplete();
+        }
+      }
+    });
+  }
+
+  checkFlagCollisions() {
+    Object.keys(this.map.gameObjects).forEach((key) => {
+      const obj = this.map.gameObjects[key];
+      if (obj instanceof Flagpole) {
+        if (this.checkCollision(this.getBoundingBox(), obj.getBoundingBox())) {
+          this.velocity.x = 0;
+          this.velocity.y = 0;
+          this.state = "flagpole";
+          this.map.levelComplete();
+        }
+      }
+    });
+  }
+
   handleCollisionWithGoomba(goomba) {
     const goombaBox = goomba.getBoundingBox();
     const characterBox = this.getBoundingBox();
@@ -115,7 +145,7 @@ class Mario extends GameObject {
       const willKill =
         proposedY > this.y &&
         characterBox.y + characterBox.height - goombaBox.y <= 10;
-      console.log(characterBox.y, characterBox.height, goombaBox.y)
+      console.log(characterBox.y, characterBox.height, goombaBox.y);
 
       if (willKill) {
         this.isOnGround = true;
@@ -137,7 +167,6 @@ class Mario extends GameObject {
   }
 
   handleCollisionWithKoopa(koopa) {
-
     const koopaBox = koopa.getBoundingBox();
     const characterBox = this.getBoundingBox();
     let proposedY = this.y + this.velocity.y;
@@ -147,7 +176,7 @@ class Mario extends GameObject {
       const willKill =
         proposedY > this.y &&
         characterBox.y + characterBox.height - koopaBox.y <= 20;
-      console.log(characterBox.y, characterBox.height, koopaBox.y)
+      console.log(characterBox.y, characterBox.height, koopaBox.y);
 
       if (willKill) {
         this.isOnGround = true;
@@ -309,6 +338,9 @@ class Mario extends GameObject {
   updateSprite() {
     if (this.state === "dead-ish") {
       this.sprite.setAnimation("dead-ish");
+      return;
+    } else if (this.state === "flagpole") {
+      this.sprite.setAnimation("flagpole");
       return;
     }
     const statePrefix = this.sizeState === "normal" ? "" : `${this.sizeState}-`;
