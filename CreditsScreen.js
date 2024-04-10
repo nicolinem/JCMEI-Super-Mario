@@ -1,4 +1,4 @@
-class InstructionsPage {
+class CreditsScreen {
   constructor(canvas, onBackClicked) {
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d");
@@ -7,26 +7,23 @@ class InstructionsPage {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.font = "16px Arial";
+    this.ctx.fillStyle = "#FFFFFF"; // White color for text
+    this.ctx.textAlign = "center";
 
-    // Instruction text settings
-    this.ctx.font = "12px Arial";
-    this.ctx.fillStyle = "#FFFFFF";
-    this.ctx.textAlign = "left";
-    let instructions = [
-      "Controls:",
-      "Move: Arrow keys or WASD",
-      "Run: Hold Shift",
-      "Become Normal: Press N",
-      "Become Super: Press M",
-      "Become Star: Press L",
-      "Change World: Press '1' for World 1, '2' for World 2",
+    // Title
+    this.ctx.fillText("Game Credits", this.canvas.width / 2, 30);
+
+    // Credits
+    const credits = [
+      "Nicoline",
+      "Julius",
       "",
       "Click anywhere to return to the title screen.",
     ];
 
-    // Draw each line of instructions
-    instructions.forEach((line, index) => {
-      this.ctx.fillText(line, 10, 20 + index * 20);
+    credits.forEach((line, index) => {
+      this.ctx.fillText(line, this.canvas.width / 2, 70 + index * 30);
     });
   }
 
@@ -41,7 +38,6 @@ class InstructionsPage {
   }
 
   clear() {
-    // Clear the canvas when leaving the instructions page
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }
