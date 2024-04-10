@@ -70,6 +70,10 @@ class Goomba extends GameObject {
     );
   }
 
+  kill() {
+    this.isDead = true;
+  }
+
   update(state) {
     this.applyGravity();
 

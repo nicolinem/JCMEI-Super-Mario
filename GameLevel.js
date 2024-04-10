@@ -50,7 +50,7 @@ class GameLevel {
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0, 0, 14, 0, 30, 10, 0, 0, 0, 15, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0, 0, 15, 0, 30, 10, 0, 0, 0, 14, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
           [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -152,6 +152,7 @@ class GameLevel {
     this.removeOutOfBoundTiles(); // Remove tiles out of bounds after shifting
     this.movePowerUps(shiftX);
     this.moveGoomba(shiftX);
+    this.moveKoopa(shiftX);
     this.moveCoins(shiftX);
     this.moveFlagpole(shiftX);
   }
@@ -259,7 +260,7 @@ class GameLevel {
   moveKoopa(x) {
     Object.values(this.gameObjects).forEach((obj) => {
       if (obj instanceof Koopa) {
-        obj.x += x;
+          obj.x -= x;
       }
     });
   }
